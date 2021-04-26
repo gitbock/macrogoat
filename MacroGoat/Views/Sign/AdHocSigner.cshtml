@@ -1,0 +1,78 @@
+﻿@{
+    ViewData["Title"] = "AdHocSigner";
+}
+
+<h2>AdHocSigner</h2>
+
+<div class="row mb-3">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body bg-light">
+                This is the Ad Hoc Signer. No config needed! Just select the Macro-enabled office file and the certificate file for
+                signing!
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="container">
+        <div asp-validation-summary="All" class="text-danger"></div>
+    </div>
+</div>
+
+<form method="post" enctype="multipart/form-data" id="adhocsigner" action="https://localhost:44319/api/Signer/RequestSigning">
+    <div class="row">
+
+        <div class="col-md-6">
+            <div class="card">
+                <h4 class="card-header">Select Office File for signing</h4>
+                <div class="card-body">
+                    <input name="OfficeFile" class="form-control-file" type="file" />
+                </div>
+            </div>
+
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card">
+                <h4 class="card-header">Select Cert File for signing</h4>
+                <div class="card-body">
+                    <input name="CertFile" class="form-control-file" type="file" />
+                    <label name="CertPw-label" class="form-check-label mt-3">Cert Password</label>
+                    <input name="CertPw" class="form-control" type="password"/>
+
+                </div>
+            </div>
+            
+        </div>
+        <div class="container">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+
+    </div>
+</form>
+
+
+<form method="post" enctype="multipart/form-data" id="checker" action="https://localhost:44319/api/Signer/checkOfficeFile">
+    <div class="row mt-5">
+
+                <div class="card">
+                    <h4 class="card-header">Select Office File for Checking</h4>
+                    <div class="card-body">
+                        <input name="OfficeFile" class="form-control" type="file" />
+                        <span name="OfficeFile" class="text-danger"></span>
+                    </div>
+                </div>
+
+            <div class="container">
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </div>
+    </div>
+</form>
+
+
+
+@section Scripts{ 
+    <partial name="_ValidationScriptsPartial" />
+}
+ 
+
