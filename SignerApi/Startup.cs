@@ -19,6 +19,7 @@ using Microsoft.OpenApi.Models;
 using Serilog;
 using SignerApi.Controllers;
 using SignerApi.Services;
+using SignerApi.Util;
 
 namespace SignerApi
 {
@@ -57,11 +58,16 @@ namespace SignerApi
             // SQLite DB 
             services.AddDbContext<DataContext>(options => options.UseSqlite(Configuration.GetConnectionString("SqliteCon")));
 
+            // seed random AES key in config if not present yet
+            GHelper.seedSecrets(Configuration);
+
+
             // Register own Database Service
             services.AddTransient<IApiActivityService, ApiActivityService>();
 
-            //Register Analyser Service
+            //Register Analyser Background Service
             services.AddSingleton<IHostedService, AnalyseService>();
+
 
         }
 

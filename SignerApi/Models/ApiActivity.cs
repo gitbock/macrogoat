@@ -26,7 +26,7 @@ namespace SignerApi.Models
             public static string Download { get { return "download"; } }
         }
         
-        public static class ApiResult
+        public static class ApiStatus
         {
             public static string Success { get { return "success"; } }
             public static string Error { get { return "error"; } }
@@ -46,7 +46,7 @@ namespace SignerApi.Models
 
         [JsonProperty]
         //end result of operation
-        public string Result { get; set; }
+        public string Status { get; set; }
 
         //Random Key (e.g. for Download mapping to SystemFilename)
         public string UniqueKey { get; set; }
@@ -86,6 +86,8 @@ namespace SignerApi.Models
         [JsonProperty]
         public string StatusUrl { get; set; }
 
+        public string EncCertPw { get; set; }
+
 
         public ApiActivity()
         {
@@ -106,7 +108,7 @@ namespace SignerApi.Models
         public override string ToString()
         {
             StringBuilder s = new StringBuilder();
-            s.Append($"result={Result} | ");
+            s.Append($"result={Status} | ");
             s.Append($"Message={Message} | ");
             s.Append($"Operation={Operation} | ");
             s.Append($"UniqueKey={UniqueKey} | ");

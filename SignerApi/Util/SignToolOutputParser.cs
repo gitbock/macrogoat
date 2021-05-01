@@ -56,7 +56,7 @@ namespace SignerApi.Util
                     Match m5 = Regex.Match(stdOut, patSigIdx, RegexOptions.Multiline);
                     if (m5.Success) // signature could be read from file successfully!
                     {
-                        ac.Result = ApiActivity.ApiResult.Success;
+                        ac.Status = ApiActivity.ApiStatus.Success;
                         ac.Message = ac.Message = $"File {filename} verified successfully.";
                         return ac;
                     }
@@ -67,7 +67,7 @@ namespace SignerApi.Util
                     Match m6 = Regex.Match(stdOut, patSuccSigned, RegexOptions.Multiline);
                     if (m6.Success) 
                     {
-                        ac.Result = ApiActivity.ApiResult.Success;
+                        ac.Status = ApiActivity.ApiStatus.Success;
                         ac.Message = $"File {filename} signed successfully.";
                         return ac;
                     }
@@ -76,7 +76,7 @@ namespace SignerApi.Util
             }
             if (stdErr != null && stdErr.Length > 0)
             {
-                ac.Result = ApiActivity.ApiResult.Error;
+                ac.Status = ApiActivity.ApiStatus.Error;
                 ac.Message = stdErr.Trim();
             }
 

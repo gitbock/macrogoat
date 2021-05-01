@@ -45,7 +45,7 @@ namespace SignerApi.Controllers
             ac.ClientIPAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
             ac.Operation = ApiActivity.ApiOperation.Verify;
             ac.Message = $"Check Office File started with filename {officeFile.FileName}";
-            ac.Result = ApiActivity.ApiResult.InProgress;
+            ac.Status = ApiActivity.ApiStatus.InProgress;
             _asvc.addUpdateApiActivity(ac);
             
             
@@ -57,7 +57,7 @@ namespace SignerApi.Controllers
                 if (!GHelper.fileHasAllowedExtension(GHelper.ExtensionType.OfficeFile, officeFileExt))
                 {
                     ac.Message = $"Office File extension {officeFileExt} not valid!";
-                    ac.Result = ApiActivity.ApiResult.Error;
+                    ac.Status = ApiActivity.ApiStatus.Error;
                     _asvc.addUpdateApiActivity(ac);
                     _l.Error(ac.Message);
                     return Content(ac.getWebresult());
@@ -69,7 +69,7 @@ namespace SignerApi.Controllers
                 if (!(GHelper.fileHasValidFormat(GHelper.ExtensionType.OfficeFile, officeFile.OpenReadStream())))
                 {
                     ac.Message = $"Office File {officeFile.FileName} not a valid office file!";
-                    ac.Result = ApiActivity.ApiResult.Error;
+                    ac.Status = ApiActivity.ApiStatus.Error;
                     _asvc.addUpdateApiActivity(ac);
                     _l.Error(ac.Message);
                     return Content(ac.getWebresult());
@@ -140,7 +140,7 @@ namespace SignerApi.Controllers
                 var message = ("No Files submitted for Verifying!");
                 _l.Debug(message);
                 ac.Operation = ApiActivity.ApiOperation.Verify;
-                ac.Result = ApiActivity.ApiResult.Error;
+                ac.Status = ApiActivity.ApiStatus.Error;
                 ac.Message = message;
                 return Content(ac.getWebresult());
             }
@@ -186,7 +186,7 @@ namespace SignerApi.Controllers
                 if (!GHelper.fileHasAllowedExtension(GHelper.ExtensionType.OfficeFile, officeFileExt))
                 {
 
-                    ac.Result = ApiActivity.ApiResult.Error;
+                    ac.Status = ApiActivity.ApiStatus.Error;
                     ac.Message = $"Office File extension {officeFileExt} not valid!";
                     _l.Error(ac.Message);
                     _asvc.addUpdateApiActivity(ac);
@@ -195,7 +195,7 @@ namespace SignerApi.Controllers
                 string certFileExt = Path.GetExtension(certFile.FileName.ToLowerInvariant());
                 if (!GHelper.fileHasAllowedExtension(GHelper.ExtensionType.CertFile, certFileExt))
                 {
-                    ac.Result = ApiActivity.ApiResult.Error;
+                    ac.Status = ApiActivity.ApiStatus.Error;
                     ac.Message = $"Certificate File extension {certFileExt} not valid!";
                     _l.Error(ac.Message);
                     _asvc.addUpdateApiActivity(ac);
@@ -206,7 +206,7 @@ namespace SignerApi.Controllers
                 // check magic number file types
                 if (!(GHelper.fileHasValidFormat(GHelper.ExtensionType.OfficeFile, officeFile.OpenReadStream())))
                 {
-                    ac.Result = ApiActivity.ApiResult.Error;
+                    ac.Status = ApiActivity.ApiStatus.Error;
                     ac.Message = $"Office File {officeFile.FileName} not a valid office file!";
                     _l.Error(ac.Message);
                     _asvc.addUpdateApiActivity(ac);
@@ -214,7 +214,7 @@ namespace SignerApi.Controllers
                 }
                 if (!(GHelper.fileHasValidFormat(GHelper.ExtensionType.CertFile, certFile.OpenReadStream())))
                 {
-                    ac.Result = ApiActivity.ApiResult.Error;
+                    ac.Status = ApiActivity.ApiStatus.Error;
                     ac.Message = $"Cert File {certFile.FileName} not a valid cert file!";
                     _l.Error(ac.Message);
                     _asvc.addUpdateApiActivity(ac);
@@ -225,7 +225,7 @@ namespace SignerApi.Controllers
                 int maxPwLength = Int32.Parse(_conf.GetSection("Security")["MaxCertPwLength"]);
                 if( certPw != null && certPw.Length > maxPwLength)
                 {
-                    ac.Result = ApiActivity.ApiResult.Error;
+                    ac.Status = ApiActivity.ApiStatus.Error;
                     ac.Message = $"Cert Pw exceeding max Length: {maxPwLength}!";
                     _l.Error(ac.Message);
                     _asvc.addUpdateApiActivity(ac);
@@ -304,7 +304,7 @@ namespace SignerApi.Controllers
 
                 // parse result, prepare return json
                 ac = SignToolOutputParser.parseSignToolOutput(SignToolOutputParser.SignToolOperation.Sign, ac, stdOut.ToString(), stdErr.ToString(), officeFile.FileName);
-                if(ac.Result == ApiActivity.ApiResult.Success)
+                if(ac.Status == ApiActivity.ApiStatus.Success)
                 {
 
                     _l.Debug($"Deleting cert file {systemFileNameCertFile}");
@@ -315,7 +315,7 @@ namespace SignerApi.Controllers
                     ac.DownloadUrl = GHelper.generateUrl(GHelper.UrlType.DownloadUrl, ac, this);
 
                     // log activity, successful
-                    ac.Result = ApiActivity.ApiResult.Success;
+                    ac.Status = ApiActivity.ApiStatus.Success;
                     ac.Message = $"Signed file ready download";
                     _asvc.addUpdateApiActivity(ac);
 
@@ -327,7 +327,7 @@ namespace SignerApi.Controllers
                     System.IO.File.Delete(Path.Combine(systemFileNameOfficeFile));
                     System.IO.File.Delete(Path.Combine(systemFileNameCertFile));
                     ac.Message = "Error signing file!";
-                    ac.Result = ApiActivity.ApiResult.Error;
+                    ac.Status = ApiActivity.ApiStatus.Error;
                     _asvc.addUpdateApiActivity(ac);
                     _l.Error(ac.ToString());
                     return Content(ac.getWebresult());
@@ -338,7 +338,7 @@ namespace SignerApi.Controllers
             }
             else
             {
-                ac.Result = ApiActivity.ApiResult.Error;
+                ac.Status = ApiActivity.ApiStatus.Error;
                 ac.Message = "Office File or Cert File not submitted. Both required for signing!";
                 _l.Error(ac.Message);
                 _asvc.addUpdateApiActivity(ac);
@@ -362,7 +362,7 @@ namespace SignerApi.Controllers
             ApiActivity ac = new ApiActivity();
             ac.Operation = ApiActivity.ApiOperation.RequestSigning;
             ac.ClientIPAddress = HttpContext.Connection.RemoteIpAddress.ToString();
-            ac.Result = ApiActivity.ApiResult.InProgress;
+            ac.Status = ApiActivity.ApiStatus.InProgress;
             
 
             if (officeFile != null && certFile != null)
@@ -386,7 +386,7 @@ namespace SignerApi.Controllers
                 if (!GHelper.fileHasAllowedExtension(GHelper.ExtensionType.OfficeFile, officeFileExt))
                 {
 
-                    ac.Result = ApiActivity.ApiResult.Error;
+                    ac.Status = ApiActivity.ApiStatus.Error;
                     ac.Message = $"Office File extension {officeFileExt} not valid!";
                     _l.Error(ac.Message);
                     _asvc.addUpdateApiActivity(ac);
@@ -395,7 +395,7 @@ namespace SignerApi.Controllers
                 string certFileExt = Path.GetExtension(certFile.FileName.ToLowerInvariant());
                 if (!GHelper.fileHasAllowedExtension(GHelper.ExtensionType.CertFile, certFileExt))
                 {
-                    ac.Result = ApiActivity.ApiResult.Error;
+                    ac.Status = ApiActivity.ApiStatus.Error;
                     ac.Message = $"Certificate File extension {certFileExt} not valid!";
                     _l.Error(ac.Message);
                     _asvc.addUpdateApiActivity(ac);
@@ -406,7 +406,7 @@ namespace SignerApi.Controllers
                 // check magic number file types
                 if (!(GHelper.fileHasValidFormat(GHelper.ExtensionType.OfficeFile, officeFile.OpenReadStream())))
                 {
-                    ac.Result = ApiActivity.ApiResult.Error;
+                    ac.Status = ApiActivity.ApiStatus.Error;
                     ac.Message = $"Office File {officeFile.FileName} not a valid office file!";
                     _l.Error(ac.Message);
                     _asvc.addUpdateApiActivity(ac);
@@ -414,7 +414,7 @@ namespace SignerApi.Controllers
                 }
                 if (!(GHelper.fileHasValidFormat(GHelper.ExtensionType.CertFile, certFile.OpenReadStream())))
                 {
-                    ac.Result = ApiActivity.ApiResult.Error;
+                    ac.Status = ApiActivity.ApiStatus.Error;
                     ac.Message = $"Cert File {certFile.FileName} not a valid cert file!";
                     _l.Error(ac.Message);
                     _asvc.addUpdateApiActivity(ac);
@@ -425,7 +425,7 @@ namespace SignerApi.Controllers
                 int maxPwLength = Int32.Parse(_conf.GetSection("Security")["MaxCertPwLength"]);
                 if (certPw != null && certPw.Length > maxPwLength)
                 {
-                    ac.Result = ApiActivity.ApiResult.Error;
+                    ac.Status = ApiActivity.ApiStatus.Error;
                     ac.Message = $"Cert Pw exceeding max Length: {maxPwLength}!";
                     _l.Error(ac.Message);
                     _asvc.addUpdateApiActivity(ac);
@@ -464,7 +464,7 @@ namespace SignerApi.Controllers
 
 
                 // START SECURITY ANALYSING THREAD
-                ac.Result = ApiActivity.ApiResult.Queued;
+                ac.Status = ApiActivity.ApiStatus.Queued;
                 ac.Message = "File queued for analysis";
 
                 //Status Page for requesting current state
@@ -481,7 +481,7 @@ namespace SignerApi.Controllers
             }
             else
             {
-                ac.Result = ApiActivity.ApiResult.Error;
+                ac.Status = ApiActivity.ApiStatus.Error;
                 ac.Message = "Office File or Cert File not submitted. Both required for signing!";
                 _l.Error(ac.Message);
                 _asvc.addUpdateApiActivity(ac);
@@ -504,7 +504,7 @@ namespace SignerApi.Controllers
         {
             ApiActivity ac = new ApiActivity();
             ac.Operation = ApiActivity.ApiOperation.Download;
-            ac.Result = ApiActivity.ApiResult.InProgress;
+            ac.Status = ApiActivity.ApiStatus.InProgress;
             ac.Message = $"Download of file {filenameKey} requested. Checking for file...";
             _asvc.addUpdateApiActivity(ac);
 
@@ -512,7 +512,7 @@ namespace SignerApi.Controllers
             if (filenameKey.Length != 36)
             {
                 ac.Message = $"key provided is not a valid key!";
-                ac.Result = ApiActivity.ApiResult.Error;
+                ac.Status = ApiActivity.ApiStatus.Error;
                 _asvc.addUpdateApiActivity(ac);
                 _l.Error(ac.Message);
                 return Content(ac.getWebresult());
@@ -535,7 +535,7 @@ namespace SignerApi.Controllers
                     // inject _signed.* in filename
                     var fileNameSigned = Path.GetFileNameWithoutExtension(activity.UserOfficeFilename) + "_signed" + Path.GetExtension(activity.UserOfficeFilename);
                     _l.Debug($"file {fullSystemFileName} found. Sending as {fileNameSigned}");
-                    ac.Result = ApiActivity.ApiResult.Success;
+                    ac.Status = ApiActivity.ApiStatus.Success;
                     ac.Message = $"File {fileNameSigned} sent for download successfully!";
                     _asvc.addUpdateApiActivity(ac);
                     return File(content, contentType, fileNameSigned);
@@ -543,7 +543,7 @@ namespace SignerApi.Controllers
                 else
                 {
                     //requested file in DB, but not found in filesystem
-                    ac.Result = ApiActivity.ApiResult.Error;
+                    ac.Status = ApiActivity.ApiStatus.Error;
                     ac.Message = $"File for key {filenameKey} not found!";
                     _asvc.addUpdateApiActivity(ac);
                     _l.Error(ac.Message);
@@ -553,7 +553,7 @@ namespace SignerApi.Controllers
             }
             catch (Exception)
             {
-                ac.Result = ApiActivity.ApiResult.Error;
+                ac.Status = ApiActivity.ApiStatus.Error;
                 ac.Message = $"FileKey {filenameKey} is invalid!";
                 _asvc.addUpdateApiActivity(ac);
                 _l.Error(ac.Message);
@@ -581,7 +581,7 @@ namespace SignerApi.Controllers
 
             ApiActivity ac = new ApiActivity(); // new entry -> Status requested 
             ac.Operation = ApiActivity.ApiOperation.Status;
-            ac.Result = ApiActivity.ApiResult.InProgress;
+            ac.Status = ApiActivity.ApiStatus.InProgress;
             ac.Message = $"Status requested for key {key}, unique Key for this status request {ac.UniqueKey}";
             _asvc.addUpdateApiActivity(ac);
             _l.Debug(ac.Message);
@@ -589,7 +589,7 @@ namespace SignerApi.Controllers
             if (key.Length != 36)
             {
                 ac.Message = $"key provided is not a valid key!";
-                ac.Result = ApiActivity.ApiResult.Error;
+                ac.Status = ApiActivity.ApiStatus.Error;
                 _asvc.addUpdateApiActivity(ac);
                 _l.Error(ac.Message);
                 return Content(ac.getWebresult());
@@ -602,7 +602,7 @@ namespace SignerApi.Controllers
                 ApiActivity requestedStatus = _asvc.getActivityByUniqueKey(key);
 
                 ac.Message = $"entry found: returning status for key {key}";
-                ac.Result = ApiActivity.ApiResult.Success;
+                ac.Status = ApiActivity.ApiStatus.Success;
                 _asvc.addUpdateApiActivity(ac);
                 return Content(requestedStatus.getWebresult());
                 
@@ -610,7 +610,7 @@ namespace SignerApi.Controllers
             }
             catch (Exception)
             {
-                ac.Result = ApiActivity.ApiResult.Error;
+                ac.Status = ApiActivity.ApiStatus.Error;
                 ac.Message = $"Key {key} is invalid!";
                 _asvc.addUpdateApiActivity(ac);
                 _l.Error(ac.Message);

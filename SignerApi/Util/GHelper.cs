@@ -8,6 +8,9 @@ using FileSignatures.Formats;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using NETCore.Encrypt;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using SignerApi.Data;
 using SignerApi.Models;
 
@@ -186,6 +189,49 @@ namespace SignerApi.Util
             return "URL could not be generated";
         }
 
+        /// <summary>
+        /// creates secrets.json file if not present with aes key
+        /// </summary>
+        /// <param name="conf"></param>
+        public static void seedSecrets(IConfiguration conf)
+        {
+            //check if secrets file already present and create if not
+            string secretFilename = "secrets.json";
+            if(!File.Exists(secretFilename))
+            {
+                using (FileStream fs = File.Create(secretFilename));
+                //create empty json file to be parseable when reading
+                JObject o = new JObject();
+                using (StreamWriter file = File.CreateText(secretFilename))
+                using (JsonTextWriter writer = new JsonTextWriter(file))
+                {
+                    writer.Formatting = Formatting.Indented;
+                    o.WriteTo(writer);
+                    
+                }
+            }
 
+            //read secrets config
+            JObject secretsConfig = JObject.Parse(File.ReadAllText(secretFilename));
+
+            // no AES key present, generte new random key
+            if (!secretsConfig.ContainsKey("aesKey"))
+            {
+                var aesKey = EncryptProvider.CreateAesKey();
+                var key = aesKey.Key;
+                secretsConfig.Add("aesKey", key);
+
+                // save json file
+                using (StreamWriter file = File.CreateText(secretFilename))
+                using (JsonTextWriter writer = new JsonTextWriter(file))
+                {
+                    writer.Formatting = Formatting.Indented;
+                    secretsConfig.WriteTo(writer);
+                }
+            }
+
+            
+
+        }
     }
 }

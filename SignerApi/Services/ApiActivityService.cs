@@ -55,12 +55,12 @@ namespace SignerApi.Services
         /// <summary>
         /// Select all items in DB with queued status.
         /// </summary>
-        /// <returns>List with ApiActivity with Result = Queued</returns>
+        /// <returns>List with ApiActivity with Status = Queued</returns>
         public List<ApiActivity> getItemsToBeAnalysed()
         {
             List<ApiActivity> l = new List<ApiActivity>();
             l = _db.ApiActivity
-                .Where(a => a.Result == ApiActivity.ApiResult.Queued)
+                .Where(a => a.Status == ApiActivity.ApiStatus.Queued)
                 .ToList();
 
             return l;
