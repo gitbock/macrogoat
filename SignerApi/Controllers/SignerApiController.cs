@@ -42,7 +42,7 @@ namespace SignerApi.Controllers
 
 
         [HttpPost]
-        [Route("CheckOfficeFile")]
+        [Route("Verify")]
         public IActionResult CheckOfficeFile(IFormFile officeFile)
         {
             ApiActivity ac = new ApiActivity();
@@ -163,7 +163,7 @@ namespace SignerApi.Controllers
         /// <param name="certPw">if cert File is PW protected use this PW to use certificate</param>
         /// <returns>Signed Office File</returns>
         [HttpPost]
-        [Route("SignOfficeFile")]
+        [Route("Sign")]
         public IActionResult SignOfficeFile(IFormFile officeFile, IFormFile certFile, [FromForm]string certPw)
         {
             //prepare svr (used for logging / error return as well)

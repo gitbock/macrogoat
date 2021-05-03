@@ -1,8 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using NETCore.Encrypt;
 using Newtonsoft.Json;
 using SignerApi.Models;
 
@@ -43,6 +46,21 @@ namespace SignerApi.Util
                 Match mFileHash = Regex.Match(stdOut, patFileHash, RegexOptions.Multiline);
                 ac.FileHash = mFileHash.Groups[1].Value.Trim();
 
+                if (ac.FileHash == "")
+                {
+                    using (FileStream fs = System.IO.File.OpenRead(ac.SystemOfficeFilename))
+                    {
+                        //byte[] fileBytes = new byte[fs.Length];
+                        //fs.Read(fileBytes, 0, fileBytes.Length);
+
+                        var sha = new SHA256Managed();
+                        byte[] checksum = sha.ComputeHash(fs);
+                        ac.FileHash = BitConverter.ToString(checksum).Replace("-", String.Empty); 
+
+                        //var hashed = EncryptProvider.Sha256(Bitconverter fileBytes);
+                    }
+                }
+
 
                 //decide if error or success
                 // note: error is raised if trust chain cannot be verified. This is a normal behavior, due the fact
@@ -71,6 +89,9 @@ namespace SignerApi.Util
                         return ac;
                     }
                 }
+
+                // if filehash was not on stdout, calculate seperately
+                
 
             }
             if (stdErr != null && stdErr.Length > 0)
