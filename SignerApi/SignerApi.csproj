@@ -29,6 +29,7 @@
   <ItemGroup>
     <Folder Include="lib\" />
     <Folder Include="logs\" />
+    <Folder Include="storage\cert_files\" />
     <Folder Include="storage\office_files\" />
   </ItemGroup>
 

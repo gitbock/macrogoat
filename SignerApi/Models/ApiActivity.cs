@@ -28,10 +28,13 @@ namespace SignerApi.Models
         
         public static class ApiStatus
         {
-            public static string Success { get { return "success"; } }
+            public static string Ready { get { return "ready"; } }
             public static string Error { get { return "error"; } }
-            public static string InProgress { get { return "in progress"; } }
-            public static string Queued { get { return "queued for analysis"; } }
+            public static string QueuedAnalysis { get { return "queued for analysis"; } }
+            public static string Analysing { get { return "analysing"; } }
+            public static string QueuedSigning { get { return "queued for signing"; } }
+            public static string Signing { get { return "signing"; } }
+            public static string Verifying { get { return "verifying"; } }
         }
 
 
@@ -108,14 +111,14 @@ namespace SignerApi.Models
         public override string ToString()
         {
             StringBuilder s = new StringBuilder();
-            s.Append($"result={Status} | ");
+            s.Append($"Status={Status} | ");
             s.Append($"Message={Message} | ");
             s.Append($"Operation={Operation} | ");
             s.Append($"UniqueKey={UniqueKey} | ");
-            s.Append($"UserOfficeFilename={UserOfficeFilename} | ");
-            s.Append($"SystemOfficeFilename={SystemOfficeFilename} | ");
-            s.Append($"UserCertFilename={UserCertFilename} | ");
-            s.Append($"SystemCertFilename={SystemCertFilename}.");
+            //s.Append($"UserOfficeFilename={UserOfficeFilename} | ");
+            //s.Append($"SystemOfficeFilename={SystemOfficeFilename} | ");
+            //s.Append($"UserCertFilename={UserCertFilename} | ");
+            //s.Append($"SystemCertFilename={SystemCertFilename}.");
             return s.ToString();
         }
 

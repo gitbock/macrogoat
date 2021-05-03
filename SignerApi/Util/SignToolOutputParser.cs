@@ -17,9 +17,8 @@ namespace SignerApi.Util
             Sign
         }
 
-        public static ApiActivity parseSignToolOutput(SignToolOperation op, ApiActivity ac, string stdOut, string stdErr, string filename)
+        public static ApiActivity parseSignToolOutput(SignToolOperation op, ApiActivity ac, string stdOut, string stdErr)
         {
-            ac.UserOfficeFilename = filename;
 
             if (stdOut != null && stdOut.Length > 0)
             {
@@ -56,8 +55,8 @@ namespace SignerApi.Util
                     Match m5 = Regex.Match(stdOut, patSigIdx, RegexOptions.Multiline);
                     if (m5.Success) // signature could be read from file successfully!
                     {
-                        ac.Status = ApiActivity.ApiStatus.Success;
-                        ac.Message = ac.Message = $"File {filename} verified successfully.";
+                        ac.Status = ApiActivity.ApiStatus.Ready;
+                        ac.Message = ac.Message = $"File {ac.UserOfficeFilename} verified successfully.";
                         return ac;
                     }
                 }
@@ -67,8 +66,8 @@ namespace SignerApi.Util
                     Match m6 = Regex.Match(stdOut, patSuccSigned, RegexOptions.Multiline);
                     if (m6.Success) 
                     {
-                        ac.Status = ApiActivity.ApiStatus.Success;
-                        ac.Message = $"File {filename} signed successfully.";
+                        ac.Status = ApiActivity.ApiStatus.Ready;
+                        ac.Message = $"File {ac.UserOfficeFilename} signed successfully.";
                         return ac;
                     }
                 }

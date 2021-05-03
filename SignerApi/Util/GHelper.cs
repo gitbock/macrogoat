@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FileSignatures;
 using FileSignatures.Formats;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using NETCore.Encrypt;
@@ -170,11 +171,11 @@ namespace SignerApi.Util
             StatusUrl
         }
         
-        public static string generateUrl(UrlType urltype, ApiActivity ac, ControllerBase contr )
+        public static string generateUrl(UrlType urltype, ApiActivity ac, IHttpContextAccessor httpctx )
         {
-            var scheme = contr.Url.ActionContext.HttpContext.Request.Scheme;
-            var host = contr.Url.ActionContext.HttpContext.Request.Host;
-            var apiPath = contr.HttpContext.Request.Path.Value.Substring(0, contr.HttpContext.Request.Path.Value.LastIndexOf("/"));
+            var scheme = httpctx.HttpContext.Request.Scheme;
+            var host = httpctx.HttpContext.Request.Host;
+            var apiPath = httpctx.HttpContext.Request.Path.Value.Substring(0, httpctx.HttpContext.Request.Path.Value.LastIndexOf("/"));
 
             if (urltype == UrlType.DownloadUrl)
             {
@@ -199,7 +200,10 @@ namespace SignerApi.Util
             string secretFilename = "secrets.json";
             if(!File.Exists(secretFilename))
             {
-                using (FileStream fs = File.Create(secretFilename));
+                using (FileStream fs = File.Create(secretFilename))
+                {
+                    fs.Close();
+                }
                 //create empty json file to be parseable when reading
                 JObject o = new JObject();
                 using (StreamWriter file = File.CreateText(secretFilename))

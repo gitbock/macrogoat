@@ -68,6 +68,12 @@ namespace SignerApi
             //Register Analyser Background Service
             services.AddSingleton<IHostedService, AnalyseService>();
 
+            //Register Signing Background Service
+            services.AddSingleton<IHostedService, SignService>();
+
+            // for accessing http context in custom components
+            services.AddHttpContextAccessor();
+
 
         }
 

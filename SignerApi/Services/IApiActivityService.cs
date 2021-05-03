@@ -21,5 +21,6 @@ namespace SignerApi.Services
 
 
         public List<ApiActivity> getItemsToBeAnalysed();
+        public List<ApiActivity> getItemsToBeSigned();
     }
 }
