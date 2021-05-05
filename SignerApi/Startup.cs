@@ -20,6 +20,7 @@ using Serilog;
 using SignerApi.Controllers;
 using SignerApi.Services;
 using SignerApi.Util;
+using AspNetCoreRateLimit;
 
 namespace SignerApi
 {
@@ -35,6 +36,29 @@ namespace SignerApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            // needed to load configuration from appsettings.json
+            services.AddOptions();
+
+            // needed to store rate limit counters and ip rules
+            services.AddMemoryCache();
+
+            //load general configuration from appsettings.json
+            services.Configure<IpRateLimitOptions>(Configuration.GetSection("IpRateLimiting"));
+
+            //load ip rules from appsettings.json
+            services.Configure<IpRateLimitPolicies>(Configuration.GetSection("IpRateLimitPolicies"));
+
+            // inject counter and rules stores
+            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+
+            // Add framework services.
+            services.AddMvc();
+
+            // configuration (resolvers, counter key builders)
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+
+
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -86,6 +110,9 @@ namespace SignerApi
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "SignerApi v1"));
             }
+
+            // Rate Limiting Extension
+            app.UseIpRateLimiting();
 
             app.UseHttpsRedirection();
 

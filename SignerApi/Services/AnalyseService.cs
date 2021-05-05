@@ -47,11 +47,10 @@ namespace SignerApi.Services
             
 
 
-            _l.Debug($"Analyse Service will check for new entries each {checkInterval} seconds.");
+            _l.Debug($"Analyse Service started; will check for new entries each {checkInterval} seconds.");
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                _l.Debug("Analyse Service checking DB for new items to be analysed...");
                 var analyseItems = _asvc.getItemsToBeAnalysed();
                 foreach (var ac in analyseItems)
                 {

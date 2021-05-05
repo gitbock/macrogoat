@@ -26,11 +26,15 @@ namespace SignerApi.Services
         public void addUpdateApiActivity(ApiActivity ac)
         {
             var entity = _db.ApiActivity.FirstOrDefault(item => item.Key == ac.Key);
-
+            
             // entity already exists -> update
             if (entity != null)
             {
                 _db.Entry(entity).CurrentValues.SetValues(ac);
+
+                // update last updated
+                entity.TsLastUpdate = DateTime.Now;
+
                 _db.ApiActivity.Update(entity);
                 _db.SaveChanges();
                 _l.Debug($"Updated in DB: {ac.ToString()}");
@@ -42,6 +46,9 @@ namespace SignerApi.Services
                 _db.SaveChanges();
                 _l.Debug($"Added to DB: {ac.ToString()}");
             }
+
+            
+
         }
 
         public ApiActivity getActivityByUniqueKey(string key)

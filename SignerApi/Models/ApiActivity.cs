@@ -41,8 +41,13 @@ namespace SignerApi.Models
         [Key]
         public int Key { get; set; }
 
+        //Timestamp Start
         [JsonProperty]
-        public DateTime Timestamp { get; set; }
+        public DateTime TsStart { get; set; }
+
+        //Timestamp Last Update
+        [JsonProperty]
+        public DateTime TsLastUpdate { get; set; }
 
         [JsonProperty]
         public string Operation { get; set; }
@@ -94,7 +99,7 @@ namespace SignerApi.Models
 
         public ApiActivity()
         {
-            this.Timestamp = DateTime.Now;
+            this.TsStart = DateTime.Now;
             this.UniqueKey = Guid.NewGuid().ToString();
         }
 

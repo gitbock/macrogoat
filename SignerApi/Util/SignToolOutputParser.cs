@@ -46,18 +46,14 @@ namespace SignerApi.Util
                 Match mFileHash = Regex.Match(stdOut, patFileHash, RegexOptions.Multiline);
                 ac.FileHash = mFileHash.Groups[1].Value.Trim();
 
+                // if file hash was not parsed from output of signtool.exe, create our own hash
                 if (ac.FileHash == "")
                 {
                     using (FileStream fs = System.IO.File.OpenRead(ac.SystemOfficeFilename))
                     {
-                        //byte[] fileBytes = new byte[fs.Length];
-                        //fs.Read(fileBytes, 0, fileBytes.Length);
-
                         var sha = new SHA256Managed();
                         byte[] checksum = sha.ComputeHash(fs);
                         ac.FileHash = BitConverter.ToString(checksum).Replace("-", String.Empty); 
-
-                        //var hashed = EncryptProvider.Sha256(Bitconverter fileBytes);
                     }
                 }
 

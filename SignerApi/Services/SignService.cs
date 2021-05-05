@@ -42,11 +42,10 @@ namespace SignerApi.Services
             //Read configs
             int checkInterval = Int32.Parse(_conf.GetSection("SignService")["checkIntervalSeconds"]);
 
-            _l.Debug($"Signing Service will check for new entries each {checkInterval} seconds.");
+            _l.Debug($"Signing Service started; will check for new entries each {checkInterval} seconds.");
 
             while (!stoppingToken.IsCancellationRequested)
             {
-                _l.Debug("Signing Service checking DB for new items to be signed...");
                 var signItems = _asvc.getItemsToBeSigned();
                 foreach (var ac in signItems)
                 {

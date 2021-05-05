@@ -156,223 +156,25 @@ namespace SignerApi.Controllers
 
 
         /// <summary>
-        /// Signs an office file by using the supplied cert file. Cert file needs to be *.pfx format
+        /// Receives a office file, cert file, optional PW for signing. Also analysis can be requested before signning
+        /// 
         /// </summary>
-        /// <param name="officeFile">A docm, xlsm or similar office file</param>
-        /// <param name="certFile">cert file used for signing the office file</param>
-        /// <param name="certPw">if cert File is PW protected use this PW to use certificate</param>
-        /// <returns>Signed Office File</returns>
-        [HttpPost]
-        [Route("Sign")]
-        public IActionResult SignOfficeFile(IFormFile officeFile, IFormFile certFile, [FromForm]string certPw)
-        {
-            //prepare svr (used for logging / error return as well)
-            ApiActivity ac = new ApiActivity();
-            ac.ClientIPAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
-            ac.Operation = ApiActivity.ApiOperation.Sign;
-            ac.Message = $"Starting signOfficeFile with {officeFile.FileName} and cert file {certFile.FileName}...";
-            ac.StatusUrl = GHelper.generateUrl(GHelper.UrlType.StatusUrl, ac, _httpctx);
-            ac.DownloadUrl = GHelper.generateUrl(GHelper.UrlType.DownloadUrl, ac, _httpctx);
-            _asvc.addUpdateApiActivity(ac);
-            
-            if (officeFile != null && certFile != null)
-            {
-                ac.UserOfficeFilename = officeFile.FileName;
-                ac.UserCertFilename = certFile.FileName;
-                if (certPw != null)
-                {
-                    _l.Debug($"Provided cert PW = \"{certPw}\"");
-                    // Read secrets
-                    JObject secretsConfig = JObject.Parse(System.IO.File.ReadAllText(@"secrets.json")); //secrets.json file not checked in. .gitignore
-                    var aesKey = (string)secretsConfig["aesKey"];
-                    var encryptedCertPw = EncryptProvider.AESEncrypt(certPw, aesKey);
-                    // save pw encrypted in DB
-                    ac.EncCertPw = encryptedCertPw;
-                }
-                else
-                {
-                    _l.Debug($"No cert PW provided!");
-                }
-
-                // ---- CHECKS
-
-                //check for valid file extension
-                string officeFileExt = Path.GetExtension(officeFile.FileName.ToLowerInvariant());
-                if (!GHelper.fileHasAllowedExtension(GHelper.ExtensionType.OfficeFile, officeFileExt))
-                {
-
-                    ac.Status = ApiActivity.ApiStatus.Error;
-                    ac.Message = $"Office File extension {officeFileExt} not valid!";
-                    _l.Error(ac.Message);
-                    _asvc.addUpdateApiActivity(ac);
-                    return Content(ac.getWebresult());
-                }
-                string certFileExt = Path.GetExtension(certFile.FileName.ToLowerInvariant());
-                if (!GHelper.fileHasAllowedExtension(GHelper.ExtensionType.CertFile, certFileExt))
-                {
-                    ac.Status = ApiActivity.ApiStatus.Error;
-                    ac.Message = $"Certificate File extension {certFileExt} not valid!";
-                    _l.Error(ac.Message);
-                    _asvc.addUpdateApiActivity(ac);
-                    return Content(ac.getWebresult());
-                     
-                }
-
-                // check magic number file types
-                if (!(GHelper.fileHasValidFormat(GHelper.ExtensionType.OfficeFile, officeFile.OpenReadStream())))
-                {
-                    ac.Status = ApiActivity.ApiStatus.Error;
-                    ac.Message = $"Office File {officeFile.FileName} not a valid office file!";
-                    _l.Error(ac.Message);
-                    _asvc.addUpdateApiActivity(ac);
-                    return Content(ac.getWebresult());
-                }
-                if (!(GHelper.fileHasValidFormat(GHelper.ExtensionType.CertFile, certFile.OpenReadStream())))
-                {
-                    ac.Status = ApiActivity.ApiStatus.Error;
-                    ac.Message = $"Cert File {certFile.FileName} not a valid cert file!";
-                    _l.Error(ac.Message);
-                    _asvc.addUpdateApiActivity(ac);
-                    return Content(ac.getWebresult());
-                }
-
-                // check PW field
-                int maxPwLength = Int32.Parse(_conf.GetSection("Security")["MaxCertPwLength"]);
-                if( certPw != null && certPw.Length > maxPwLength)
-                {
-                    ac.Status = ApiActivity.ApiStatus.Error;
-                    ac.Message = $"Cert Pw exceeding max Length: {maxPwLength}!";
-                    _l.Error(ac.Message);
-                    _asvc.addUpdateApiActivity(ac);
-                    return Content(ac.getWebresult());
-                }
-
-
-                //save office file with unique filename, not enumerable
-                string uniFilenameOfficeFile = GHelper.createUniqueFileName(officeFile.FileName);
-                string systemFolderOfficeFile = GHelper.getOfficeFilesSystemDir(_webHostEnv, _conf);
-                string systemFileNameOfficeFile = Path.Combine(systemFolderOfficeFile, uniFilenameOfficeFile);
-                ac.SystemOfficeFilename = systemFileNameOfficeFile;
-
-                // create dir if not exist
-                System.IO.Directory.CreateDirectory(systemFolderOfficeFile);
-                _l.Debug($"Saving Office file to {systemFolderOfficeFile}");
-                using (var fileStream = new FileStream(systemFileNameOfficeFile, FileMode.Create))
-                {
-                    officeFile.CopyTo(fileStream);
-
-                }
-
-                //save cert file with unique filename, not enumerable
-                string uniFilenameCertFile = GHelper.createUniqueFileName(certFile.FileName);
-                string systemFolderCertFile = GHelper.getCertFilesSystemDir(_webHostEnv, _conf);
-                string systemFileNameCertFile = Path.Combine(systemFolderCertFile, uniFilenameCertFile);
-                ac.SystemCertFilename = systemFileNameCertFile;
-
-                _asvc.addUpdateApiActivity(ac);
-
-                // create dir if not exist
-                System.IO.Directory.CreateDirectory(systemFolderCertFile);
-                _l.Debug($"Saving cert file to {systemFileNameCertFile}");
-                using (var fileStream = new FileStream(systemFileNameCertFile, FileMode.Create))
-                {
-                    certFile.CopyTo(fileStream);
-                }
-
-                // ---- SIGN FILE
-
-                // prepare run
-                ProcessStartInfo psi = new ProcessStartInfo();
-                psi.FileName = _webHostEnv.ContentRootPath + "/lib/signtool.exe";
-                psi.RedirectStandardError = true;
-                psi.RedirectStandardOutput = true;
-                psi.UseShellExecute = false;
-                if(certPw != null && certPw.Length > 0)
-                {
-                    psi.Arguments = $"sign /debug /v /f /fd sha256  \"{systemFileNameCertFile}\" /p {certPw} \"{systemFileNameOfficeFile}\"";
-                }
-                else
-                {
-                    psi.Arguments = $"sign /debug /v /f /fd sha256 \"{systemFileNameCertFile}\" \"{systemFileNameOfficeFile}\"";
-                }
-                _l.Debug($"Executing {psi.FileName} {psi.Arguments}...");
-
-                // execute run
-                StringBuilder stdOut = new StringBuilder();
-                StringBuilder stdErr = new StringBuilder();
-                Process p = new Process();
-                p.StartInfo = psi;
-                p.Start();
-
-                while (!p.StandardOutput.EndOfStream)
-                {
-                    stdOut.AppendLine(p.StandardOutput.ReadLine());
-                }
-                while (!p.StandardError.EndOfStream)
-                {
-                    stdErr.AppendLine(p.StandardError.ReadLine());
-                }
-                p.WaitForExit();
-                _l.Debug("Process exited. Parsing...");
-
-                // parse result, prepare return json
-                ac = SignToolOutputParser.parseSignToolOutput(SignToolOutputParser.SignToolOperation.Sign, ac, stdOut.ToString(), stdErr.ToString());
-                if(ac.Status == ApiActivity.ApiStatus.Ready)
-                {
-
-                    _l.Debug($"Deleting cert file {systemFileNameCertFile}");
-                    // delete cert file after signing
-                    System.IO.File.Delete(Path.Combine(systemFileNameCertFile));
-
-                    // log activity, successful
-                    ac.Status = ApiActivity.ApiStatus.Ready;
-                    ac.Message = $"Signed file ready download";
-                    _asvc.addUpdateApiActivity(ac);
-
-                    return Content(ac.getWebresult());
-                }
-                else
-                {
-                    // error signing file; cleanup
-                    System.IO.File.Delete(Path.Combine(systemFileNameOfficeFile));
-                    System.IO.File.Delete(Path.Combine(systemFileNameCertFile));
-                    ac.Message = "Error signing file!";
-                    ac.Status = ApiActivity.ApiStatus.Error;
-                    _asvc.addUpdateApiActivity(ac);
-                    _l.Error(ac.ToString());
-                    return Content(ac.getWebresult());
-                }
-
-                
-
-            }
-            else
-            {
-                ac.Status = ApiActivity.ApiStatus.Error;
-                ac.Message = "Office File or Cert File not submitted. Both required for signing!";
-                _l.Error(ac.Message);
-                _asvc.addUpdateApiActivity(ac);
-                return Content(ac.getWebresult());
-            }
-
-        }
-
-
+        /// <param name="officeFile">office file including macros to be signed</param>
+        /// <param name="certFile">cert file in *.pfx or *.p12 format which should be used to sign office file</param>
+        /// <param name="certPw">if cert is PW protected, use this PW to decrypt key in cert. PW will be temporary saved encrypted in DB</param>
+        /// <param name="analyse">analysis requested before signing</param>
+        /// <returns>JSON Status Page for this activity</returns>
         [HttpPost]
         [Route("RequestSigning")]
-        public IActionResult RequestSigning(IFormFile officeFile, IFormFile certFile, [FromForm] string certPw)
+        public IActionResult RequestSigning(IFormFile officeFile, IFormFile certFile, [FromForm] string certPw, [FromForm] bool analyse)
         {
-            var clientIp = Request.HttpContext.Connection.RemoteIpAddress.ToString();
-            var operation = ApiActivity.ApiOperation.RequestSigning;
-
-
-            // CHECKS
+            
 
             //prepare ac (used for logging / error return as well)
             ApiActivity ac = new ApiActivity();
             ac.Operation = ApiActivity.ApiOperation.RequestSigning;
             ac.ClientIPAddress = HttpContext.Connection.RemoteIpAddress.ToString();
-            ac.Status = ApiActivity.ApiStatus.QueuedAnalysis;
+            
             ac.StatusUrl = GHelper.generateUrl(GHelper.UrlType.StatusUrl, ac, _httpctx);
             ac.DownloadUrl = GHelper.generateUrl(GHelper.UrlType.DownloadUrl, ac, _httpctx);
 
@@ -398,6 +200,8 @@ namespace SignerApi.Controllers
                 {
                     _l.Debug($"No cert PW provided!");
                 }
+
+                //------- CHECKS
 
                 //check for valid file extension
                 string officeFileExt = Path.GetExtension(officeFile.FileName.ToLowerInvariant());
@@ -480,10 +284,22 @@ namespace SignerApi.Controllers
                     certFile.CopyTo(fileStream);
                 }
 
-
-                // START SECURITY ANALYSING THREAD
-                ac.Message = "File queued for analysis";
-                _asvc.addUpdateApiActivity(ac);
+                if (analyse)
+                {
+                    // Queue foor ANALYSING
+                    ac.Status = ApiActivity.ApiStatus.QueuedAnalysis;
+                    ac.Message = "File queued for analysis";
+                    _asvc.addUpdateApiActivity(ac);
+                    _l.Debug("Analysis requested, queuing for analysis...");
+                }
+                else
+                {
+                    // Queue for SIGNING
+                    ac.Status = ApiActivity.ApiStatus.QueuedSigning;
+                    ac.Message = "File queued for signing";
+                    _asvc.addUpdateApiActivity(ac);
+                    _l.Debug("NO analysis requested, queuing for signing at once...");
+                }
 
 
                 // RETURN STATUS PAGE
@@ -506,23 +322,23 @@ namespace SignerApi.Controllers
 
 
         /// <summary>
-        /// Returns a File for requested FileKey.
+        /// Returns a File for requested key.
         /// 
         /// </summary>
-        /// <param name="filenameKey">GUID Filekey which was provided by Signer API while signing Office File</param>
+        /// <param name="key">GUID key which was provided by Signer API while signing Office File</param>
         /// <returns>Filestream if file for Key exists or JSON error message</returns>
         [HttpGet]
-        [Route("DownloadFile/{filenameKey}")]
-        public IActionResult DownloadFile(string filenameKey)
+        [Route("DownloadFile/{key}")]
+        public IActionResult DownloadFile(string key)
         {
             ApiActivity ac = new ApiActivity();
             ac.Operation = ApiActivity.ApiOperation.Download;
             ac.Status = ApiActivity.ApiStatus.Ready;
-            ac.Message = $"Download of file {filenameKey} requested. Checking for file...";
+            ac.Message = $"Download of file {key} requested. Checking for file...";
             _asvc.addUpdateApiActivity(ac);
 
             //check if malicious content, GUID == 36 characters
-            if (filenameKey.Length != 36)
+            if (key.Length != 36)
             {
                 ac.Message = $"key provided is not a valid key!";
                 ac.Status = ApiActivity.ApiStatus.Error;
@@ -534,13 +350,13 @@ namespace SignerApi.Controllers
             //check if file ID exixts / file present
             try
             {
-                var activity = _asvc.getActivityByUniqueKey(filenameKey);
+                var activity = _asvc.getActivityByUniqueKey(key);
                 var systemFileName = activity.SystemOfficeFilename;
 
                 //if file not ready (still queued or signing) no download!
                 if(activity.Status != ApiActivity.ApiStatus.Ready)
                 {
-                    ac.Message = $"File Status of {filenameKey} is {activity.Status}. not ready for download yet!";
+                    ac.Message = $"File Status of {key} is {activity.Status}. not ready for download yet!";
                     ac.Status = ApiActivity.ApiStatus.Error;
                     _asvc.addUpdateApiActivity(ac);
                     _l.Error(ac.Message);
@@ -551,7 +367,7 @@ namespace SignerApi.Controllers
                 var storagePath = GHelper.getOfficeFilesSystemDir(_webHostEnv, _conf);
                 var fullSystemFileName = Path.Combine(storagePath, systemFileName);
                 if (System.IO.File.Exists(fullSystemFileName)){
-                    _l.Debug($"Sytemfile {fullSystemFileName} found. Starting sending file...");
+                    _l.Debug($"System file {fullSystemFileName} found. Starting sending file...");
                     // send file for download
                     var content = new FileStream(fullSystemFileName, FileMode.Open);
                     var contentType = "APPLICATION/octet-stream";
@@ -567,7 +383,7 @@ namespace SignerApi.Controllers
                 {
                     //requested file in DB, but not found in filesystem
                     ac.Status = ApiActivity.ApiStatus.Error;
-                    ac.Message = $"File for key {filenameKey} not found!";
+                    ac.Message = $"File for key {key} not found!";
                     _asvc.addUpdateApiActivity(ac);
                     _l.Error(ac.Message);
                     return Content(ac.getWebresult());
@@ -577,7 +393,7 @@ namespace SignerApi.Controllers
             catch (Exception)
             {
                 ac.Status = ApiActivity.ApiStatus.Error;
-                ac.Message = $"FileKey {filenameKey} is invalid!";
+                ac.Message = $"FileKey {key} is invalid!";
                 _asvc.addUpdateApiActivity(ac);
                 _l.Error(ac.Message);
                 return Content(ac.getWebresult());
@@ -619,27 +435,31 @@ namespace SignerApi.Controllers
             }
 
             //check if ID exixts / activity present
-            try
-            {
-                // get DB entry for updating
-                ApiActivity requestedStatus = _asvc.getActivityByUniqueKey(key);
-
-                ac.Message = $"entry found: returning status for key {key}";
-                ac.Status = ApiActivity.ApiStatus.Ready;
-                _asvc.addUpdateApiActivity(ac);
-                return Content(requestedStatus.getWebresult());
-                
-
-            }
-            catch (Exception)
+            // get DB entry for updating
+            ApiActivity requestedStatus = _asvc.getActivityByUniqueKey(key);
+            if(requestedStatus == null)
             {
                 ac.Status = ApiActivity.ApiStatus.Error;
                 ac.Message = $"Key {key} is invalid!";
                 _asvc.addUpdateApiActivity(ac);
                 _l.Error(ac.Message);
                 return Content(ac.getWebresult());
-
             }
+            else
+            {
+                ac.Message = $"file found: returning status for key {key}";
+                ac.Status = ApiActivity.ApiStatus.Ready;
+                _asvc.addUpdateApiActivity(ac);
+                return Content(requestedStatus.getWebresult());
+            }
+            
+                
+                
+
+           
+                
+
+            
 
 
 
