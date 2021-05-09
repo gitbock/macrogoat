@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MacroGoat.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Configuration;
 
 namespace MacroGoat.Util
 {
@@ -18,7 +20,8 @@ namespace MacroGoat.Util
         static string[] DefaultRoles =
         {
             "SuperAdmin",
-            "Signer"
+            "Signer",
+            "ZertAdmin"
         };
 
         /// <summary>
@@ -42,7 +45,14 @@ namespace MacroGoat.Util
         {
             var allSuperAdminUsers = usrmgr.GetUsersInRoleAsync("SuperAdmin");
             if(allSuperAdminUsers.Result.Count == 0)
-            {
+            {   
+                
+                
+
+
+
+
+                //var profileImgDir = GHelper.getProfilePicturesWebserverDir();
                 // no Super Admin User exists -> create one
                 GUser sa = new GUser
                 {
@@ -53,6 +63,24 @@ namespace MacroGoat.Util
                     FirstName = "Super",
                     LastName = "Admin"                    
                 };
+
+                try
+                {
+                    //Because it's a static class cannot use dependency injection
+                    // read config file once
+                    //IConfigurationBuilder builder = new ConfigurationBuilder()
+                    //.SetBasePath(Directory.GetCurrentDirectory())
+                    //.AddJsonFile("appsettings.json", optional: true, reloadOnChange: false);
+                    //IConfigurationRoot conf = builder.Build();
+
+
+                }
+                catch (Exception ex)
+                {
+
+                }
+
+
                 await usrmgr.CreateAsync(sa, "MacroGoat#22");
                 await usrmgr.AddToRoleAsync(sa, "SuperAdmin");
                 

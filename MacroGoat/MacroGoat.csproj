@@ -22,7 +22,6 @@
   <ItemGroup>
     <Folder Include="wwwroot\data\cert_files\" />
     <Folder Include="wwwroot\data\office_files\" />
-    <Folder Include="wwwroot\data\profile_pictures\" />
   </ItemGroup>
 
 </Project>

@@ -36,16 +36,16 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label asp-for="Input.ProfileImage"></label>
-                @if (Model.Input.ProfilePicture != null)
-                {
-                    <img id="profilePicture" style="width:350px;height:350px; object-fit:cover" src="/@Model.ProfilesPicturePath/@Model.Input.ProfilePicture">
-                }
-                else
-                {
-                    //Needed for java script function on change if was empty before!
-                    <img id="profilePicture" style="width:350px;height:350px; object-fit:cover" src="" hidden>
-                    <p>No Profile Picture!</p>
-                }
+                    @if (Model.Input.ProfilePicture != null)
+                    {
+                        <img class="img-thumbnail" id="profilePicture" src="/@Model.ProfilesPicturePath/@Model.Input.ProfilePicture">
+                    }
+                    else
+                    {
+                        //Needed for java script function on change if was empty before!
+                        <img id="profilePicture" src="" hidden>
+                        <p>No Profile Picture!</p>
+                    }
                 <br />
                 <div class="form-group">
                     <label asp-for="Input.DeleteProfilePic"></label>

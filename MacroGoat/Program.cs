@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using MacroGoat.Models;
+using MacroGoat.Services;
 using MacroGoat.Util;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -23,22 +24,30 @@ namespace MacroGoat
             using (var scope = host.Services.CreateScope())
             {
                 var services = scope.ServiceProvider;
+
+                // get services which were already registered ago by createHostBuilder and startup
                 var loggerFactory = services.GetRequiredService<ILoggerFactory>();
+                var helper = services.GetRequiredService<GHelperService>();
+                
+                // create default logging to be used througout helper service
+                helper.l = loggerFactory.CreateLogger<Program>();
+
                 try
                 {
+                    
                     var userManager = services.GetRequiredService<UserManager<GUser>>();
                     var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-                    
-                    // Seed default Roles
-                    await GDBSeed.SeedDefaultRoles(roleManager);
 
-                    // Seed default user
-                    await GDBSeed.SeedDefaultSuperAdmin(userManager);
+
+                    // Seed default roles and User User if not exist
+                    helper.logInfo("Seeding default values to DB if needed... ");
+                    await helper.SeedDefaultRoles(roleManager);
+                    await helper.SeedDefaultSuperAdmin(userManager);
+                    
                 }
                 catch (Exception ex)
                 {
-                    var logger = loggerFactory.CreateLogger<Program>();
-                    logger.LogError(ex, "An error occurred seeding the DB.");
+                    helper.logError($"An error occurred seeding the DB {ex.Message}");
                 }
             }
 

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using MacroGoat.Models;
 using MacroGoat.Util;
+using MacroGoat.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -19,19 +20,17 @@ namespace MacroGoat.Areas.Identity.Pages.Account.Manage
     {
         private readonly UserManager<GUser> _userManager;
         private readonly SignInManager<GUser> _signInManager;
-        private readonly IConfiguration _conf;
-        private readonly IWebHostEnvironment _webHostEnv;
+        private readonly GHelperService _hlp;
+
 
         public IndexModel(
             UserManager<GUser> userManager,
-            SignInManager<GUser> signInManager,
-            IConfiguration configuration,
-            IWebHostEnvironment webHostEnv)
+            SignInManager<GUser> signInManager, GHelperService hlp
+            )
         {
             _userManager = userManager;
             _signInManager = signInManager;
-            _conf = configuration;
-            _webHostEnv = webHostEnv;
+            _hlp = hlp;
             
         }
 
@@ -74,9 +73,6 @@ namespace MacroGoat.Areas.Identity.Pages.Account.Manage
 
         private async Task LoadAsync(GUser user)
         {
-            //provide Path in Model to use in html directly
-            ProfilesPicturePath = _conf.GetSection("FileConfig")["ProfilePicturePath"];
-            
             
             var userName = await _userManager.GetUserNameAsync(user);
             var phoneNumber = await _userManager.GetPhoneNumberAsync(user);
@@ -156,7 +152,7 @@ namespace MacroGoat.Areas.Identity.Pages.Account.Manage
             // if delete checkbox was set, delete profile picture
             if (Input.DeleteProfilePic && user.ProfilePicture != null)
             {
-                string systemFolder = GHelper.getProfilePicturesSystemDir(_webHostEnv, _conf);
+                string systemFolder = _hlp.getProfilePicturesSystemDir();
                 System.IO.File.Delete(Path.Combine(systemFolder, user.ProfilePicture));
                 user.ProfilePicture = null;
                 await _userManager.UpdateAsync(user);
@@ -190,7 +186,7 @@ namespace MacroGoat.Areas.Identity.Pages.Account.Manage
             // unique, random file name so it cannot be enumerated!
             string uniqueFileName = null;
 
-            string systemFolder = GHelper.getProfilePicturesSystemDir(_webHostEnv, _conf);
+            string systemFolder = _hlp.getProfilePicturesSystemDir();
 
             // delete old file of user
             if (user.ProfilePicture != null)

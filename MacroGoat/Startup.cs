@@ -21,12 +21,14 @@ namespace MacroGoat
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration configuration, IWebHostEnvironment webenv)
         {
             Configuration = configuration;
+            WebHostEnvironment = webenv;
         }
 
         public IConfiguration Configuration { get; }
+        public IWebHostEnvironment WebHostEnvironment { get; }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
@@ -46,6 +48,9 @@ namespace MacroGoat
 
             // for sending mails by user creation / username change
             services.AddTransient<IEmailSender, GEmailSender>();
+
+            // register own Helper Service. Can always be called executing own methods which need to use webenv/conf
+            services.AddSingleton<GHelperService>(new GHelperService(Configuration, WebHostEnvironment));
 
         }
 
