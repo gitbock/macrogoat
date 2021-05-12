@@ -4,7 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using MacroGoat.Models;
-using MacroGoat.Util;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -37,7 +37,32 @@ namespace MacroGoat.Controllers
         }
 
 
-        
+
+
+        /// <summary>
+        /// For signing files after logon
+        /// </summary>
+        /// <returns></returns>
+        [Authorize(Roles = "Signer,SuperAdmin,CertAdmin")]
+        [HttpGet]
+        public IActionResult Sign()
+        {
+            return View();
+        }
+
+
+        /// <summary>
+        /// For verifying files after logon
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet]
+        public IActionResult Verify()
+        {
+            return View();
+        }
+
+
+
 
     }
 }

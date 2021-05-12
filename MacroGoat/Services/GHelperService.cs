@@ -101,7 +101,7 @@ namespace MacroGoat.Services
         {
             "SuperAdmin",
             "Signer",
-            "ZertAdmin"
+            "CertAdmin"
         };
 
         /// <summary>

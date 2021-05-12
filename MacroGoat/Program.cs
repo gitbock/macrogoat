@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using MacroGoat.Models;
 using MacroGoat.Services;
-using MacroGoat.Util;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;

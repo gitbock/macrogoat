@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using MacroGoat.Data;
 using MacroGoat.Models;
 using MacroGoat.Services;
-using MacroGoat.Util;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;

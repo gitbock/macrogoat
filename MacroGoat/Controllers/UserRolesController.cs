@@ -6,6 +6,7 @@ using MacroGoat.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace MacroGoat.Controllers
 {
@@ -13,15 +14,17 @@ namespace MacroGoat.Controllers
     {
         private readonly UserManager<GUser> _usrmgr;
         private readonly RoleManager<IdentityRole> _rolemgr;
+        private readonly ILogger<UserRolesController> _logger;
 
-        public UserRolesController(UserManager<GUser> usrmgr, RoleManager<IdentityRole> rolemgr)
+        public UserRolesController(UserManager<GUser> usrmgr, RoleManager<IdentityRole> rolemgr, ILogger<UserRolesController> logger)
         {
             _rolemgr = rolemgr;
             _usrmgr = usrmgr;
+            _logger = logger;
         }
 
         [Authorize(Roles = "SuperAdmin")]
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> UserManager()
         {
             var allUsers = _usrmgr.Users.ToList<GUser>();
             
@@ -44,6 +47,55 @@ namespace MacroGoat.Controllers
 
             return View(allUsersMV);
         }
+
+        [HttpGet]
+        [Authorize(Roles = "SuperAdmin")]
+        public IActionResult CreateUser()
+        {
+            return View();
+        }
+
+
+
+        [HttpPost]
+        [Authorize(Roles = "SuperAdmin")]
+        public async Task<IActionResult> CreateUserAsync(CreateUserViewModel newUser)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = new GUser { UserName = newUser.Username, Email = newUser.Username, FirstName = newUser.FirstName, LastName = newUser.LastName };
+                var result = await _usrmgr.CreateAsync(user, newUser.Password);
+                if (result.Succeeded)
+                {
+                    _logger.LogInformation("User created a new account with password.");
+                    return RedirectToAction("UserManager"); // show overview with Roles and Users again
+
+                }
+                else
+                {
+                    foreach (var error in result.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.Description);
+                    }
+                }
+                
+            }
+            else
+            {
+                foreach (var modelState in ViewData.ModelState.Values)
+                {
+                    foreach (var error in modelState.Errors)
+                    {
+                        ModelState.AddModelError(string.Empty, error.ErrorMessage);
+                    }
+                }
+            }
+
+            // If we got this far, something failed, redisplay form
+            return View();
+
+        }
+
 
         [HttpGet]
         [Authorize(Roles = "SuperAdmin")]
@@ -109,7 +161,32 @@ namespace MacroGoat.Controllers
             }
 
             
-            return RedirectToAction("Index"); // show overview with Roles and Users again
+            return RedirectToAction("UserManager"); // show overview with Roles and Users again
+        }
+
+
+        [Authorize(Roles = "SuperAdmin")]
+        [HttpGet]
+        public async Task<IActionResult> Delete(string userId)
+        {
+            if (userId == null)
+            {
+                ViewBag.ErrorMessage = $"No User ID to delere to manage";
+                return View("NotFound");
+            }
+
+            GUser user = await _usrmgr.FindByIdAsync(userId);
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User {userId} not found for managing its roles";
+                return View("NotFound");
+            }
+
+            await _usrmgr.DeleteAsync(user);
+            
+
+
+            return RedirectToAction("UserManager"); // show overview with Roles and Users again
         }
 
     }

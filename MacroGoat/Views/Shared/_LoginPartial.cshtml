@@ -1,6 +1,5 @@
 ﻿@using Microsoft.AspNetCore.Identity
 @using MacroGoat.Models
-@using MacroGoat.Util
 @using Microsoft.Extensions.Configuration
 @using MacroGoat.Services
 
@@ -57,12 +56,7 @@
 
 @if (SignInManager.IsSignedIn(User) && isDefaultSuperAdminPw == PasswordVerificationResult.Success)
 {
-    @*<div class="text-danger">You are using default super admin credentials.</div>
-        <div class="text-danger">
-            Goto <a asp-area="Identity" asp-page="/Account/Manage/ChangePassword">Profile</a>
-            and change PW immedeately from "MacroGoat#22" to a safe PW!!
-        </div>*@
-
+   
     <script type="text/javascript">
         $(document).ready(function () {
            

@@ -38,7 +38,7 @@ namespace MacroGoat.Controllers
         }
 
 
-
+        [Authorize(Roles = "SuperAdmin")]
         [HttpPost]
         public async Task<IActionResult> DeleteRole(List<string> roleId)
         {
