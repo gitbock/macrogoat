@@ -23,6 +23,12 @@ namespace MacroGoat.Controllers
             _logger = logger;
         }
 
+
+
+
+        // MANAGING USERS
+
+
         [Authorize(Roles = "SuperAdmin")]
         public async Task<IActionResult> UserManager()
         {
@@ -56,10 +62,9 @@ namespace MacroGoat.Controllers
         }
 
 
-
         [HttpPost]
         [Authorize(Roles = "SuperAdmin")]
-        public async Task<IActionResult> CreateUserAsync(CreateUserViewModel newUser)
+        public async Task<IActionResult> CreateUser(CreateUserViewModel newUser)
         {
             if (ModelState.IsValid)
             {
@@ -96,11 +101,46 @@ namespace MacroGoat.Controllers
 
         }
 
+        [Authorize(Roles = "SuperAdmin")]
+        [HttpGet]
+        public async Task<IActionResult> DeleteUser(string userId)
+        {
+            if (userId == null)
+            {
+                ViewBag.ErrorMessage = $"No User ID to delete to manage";
+                return View("NotFound");
+            }
+
+            GUser user = await _usrmgr.FindByIdAsync(userId);
+            if (user == null)
+            {
+                ViewBag.ErrorMessage = $"User {userId} not found for managing its roles";
+                return View("NotFound");
+            }
+
+            await _usrmgr.DeleteAsync(user);
+
+
+
+            return RedirectToAction("UserManager"); // show overview with Roles and Users again
+        }
+
+
+
+        // MANAGING ROLES
+
+        [Authorize(Roles = "SuperAdmin")]
+        public IActionResult RoleManager()
+        {
+            var roles = _rolemgr.Roles.ToList();
+            return View(roles);
+        }
+
 
         [HttpGet]
         [Authorize(Roles = "SuperAdmin")]
         // shows all Roles by user
-        public async Task<IActionResult> Manage(string userId)
+        public async Task<IActionResult> EditUserRoles(string userId)
         {
             
             // to make selected user available in view later
@@ -133,7 +173,7 @@ namespace MacroGoat.Controllers
 
         [Authorize(Roles = "SuperAdmin")]
         [HttpPost]
-        public async Task<IActionResult> Manage(List<ManageUserRolesViewModel> managedRoles, string userId)
+        public async Task<IActionResult> EditUserRoles(List<ManageUserRolesViewModel> managedRoles, string userId)
         {
             if(managedRoles == null)
             {
@@ -165,28 +205,37 @@ namespace MacroGoat.Controllers
         }
 
 
+
         [Authorize(Roles = "SuperAdmin")]
-        [HttpGet]
-        public async Task<IActionResult> Delete(string userId)
+        [HttpPost]
+        public async Task<IActionResult> AddRole(string roleName)
         {
-            if (userId == null)
+            if (roleName != null)
             {
-                ViewBag.ErrorMessage = $"No User ID to delere to manage";
-                return View("NotFound");
+                await _rolemgr.CreateAsync(new IdentityRole(roleName.Trim()));
             }
+            return RedirectToAction("RoleManager");
+        }
 
-            GUser user = await _usrmgr.FindByIdAsync(userId);
-            if (user == null)
+
+        [Authorize(Roles = "SuperAdmin")]
+        [HttpPost]
+        public async Task<IActionResult> DeleteRole(List<string> roleId)
+        {
+            if (roleId != null)
             {
-                ViewBag.ErrorMessage = $"User {userId} not found for managing its roles";
-                return View("NotFound");
+                foreach (var role in roleId)
+                {
+                    var deleteRole = await _rolemgr.FindByIdAsync(role);
+                    if (deleteRole != null)
+                    {
+                        await _rolemgr.DeleteAsync(deleteRole);
+                    }
+                }
+
+
             }
-
-            await _usrmgr.DeleteAsync(user);
-            
-
-
-            return RedirectToAction("UserManager"); // show overview with Roles and Users again
+            return RedirectToAction("RoleManager");
         }
 
     }

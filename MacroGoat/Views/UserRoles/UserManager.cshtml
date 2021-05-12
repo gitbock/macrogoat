@@ -32,13 +32,13 @@
                 <td>@user.Email</td>
                 <td>@string.Join(" , ", user.Roles.ToList())</td>
                 <td>
-                    <a class="btn btn-primary btn-icon-split" asp-controller="UserRoles" asp-action="Manage" asp-route-userId="@user.UserId">
+                    <a class="btn btn-primary btn-icon-split" asp-controller="UserRoles" asp-action="EditUserRoles" asp-route-userId="@user.UserId">
                         <span class="icon text-white-50">
                             <i class="fas fa-wrench"></i>
                         </span>
                         <span class="text">Manage Roles</span>
                     </a>
-                    <a class="btn btn-danger btn-icon-split" asp-controller="UserRoles" asp-action="Delete" asp-route-userId="@user.UserId">
+                    <a class="btn btn-danger btn-icon-split" asp-controller="UserRoles" asp-action="DeleteUser" asp-route-userId="@user.UserId">
                         <span class="icon text-white-50">
                             <i class="fas fa-trash"></i>
                         </span>

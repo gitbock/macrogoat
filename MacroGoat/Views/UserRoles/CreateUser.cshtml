@@ -1,4 +1,4 @@
-﻿@model CreateUserViewModel 
+﻿@model CreateUserViewModel
 
 
 
@@ -42,9 +42,9 @@
         <div class="col-md-6">
             <div class="form-group">
                 <label asp-for="ProfileImage"></label>
-                    @*Needed for java script function on change if was empty before!*@
-                    <img id="profilePicture" src="" hidden>
-                    <p>No Profile Picture!</p>
+                @*Needed for java script function on change if was empty before!*@
+                <img id="profilePicture" src="" hidden>
+                <p>No Profile Picture!</p>
                 <br />
                 <div class="custom-file">
                     <input asp-for="ProfileImage"
@@ -59,6 +59,7 @@
         </div>
     </div>
 </form>
+
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />

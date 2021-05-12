@@ -147,7 +147,7 @@
                             @if (User.IsInRole("SuperAdmin"))
                             {
                                 <a class="collapse-item" asp-controller="Admin" asp-action="Settings">Settings</a>
-                                <a class="collapse-item" asp-controller="RoleManager" asp-action="Index">Role Manager</a>
+                                <a class="collapse-item" asp-controller="UserRoles" asp-action="RoleManager">Role Manager</a>
                                 <a class="collapse-item" asp-controller="UserRoles" asp-action="UserManager">User Manager</a>
                             }
                         </div>
