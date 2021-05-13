@@ -28,7 +28,7 @@
         {
             <li>
                 <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">
-                    <img style="width:40px;height:40px; object-fit:cover; border-radius:30px" src="@profilePicDir/@UserManager.GetUserAsync(User).Result.ProfilePicture">
+                    <img style="width:40px;height:40px; object-fit:cover; border-radius:30px" src="/@profilePicDir/@UserManager.GetUserAsync(User).Result.ProfilePicture">
                 </a>
             </li>
         }

@@ -52,7 +52,7 @@
 
             <!-- Sidebar - Brand -->
             <div class="row mt-4 mb-4">
-                <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+                <a class="sidebar-brand d-flex align-items-center justify-content-center" asp-controller="Home" asp-action="Index">
                     <div class="col-6">
                         <div class="sidebar-brand-icon">
                             <img class="img-fluid" src="~/img/macro_goat_weiss.png" />
@@ -70,7 +70,7 @@
 
             <!-- Nav Item - Dashboard -->
             <li class="nav-item active">
-                <a class="nav-link" asp-action="Index">
+                <a class="nav-link" asp-controller="Home" asp-action="Index">
                     <i class="fas fa-fw fa-home"></i>
                     <span>Home</span>
                 </a>

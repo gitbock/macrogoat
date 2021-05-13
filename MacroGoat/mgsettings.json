@@ -1,0 +1,12 @@
+{
+  "DeleteFilesAfterSign": {
+    "Value": "true",
+    "Description": "Deletes Files after Signing"
+  },
+  "FileSettings": {
+    "ProfilePicturePath": {
+      "Value": "data/profile_pictures",
+      "Description": "webserver directory for storing profile pictures"
+    }
+  }
+}

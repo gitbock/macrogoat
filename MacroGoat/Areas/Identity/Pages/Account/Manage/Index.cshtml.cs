@@ -78,6 +78,7 @@ namespace MacroGoat.Areas.Identity.Pages.Account.Manage
             var firstName = user.FirstName;
             var lastName = user.LastName;
             var profilePicture = user.ProfilePicture; // name string only
+            this.ProfilesPicturePath = _hlp.getProfilePicturesWebserverDir();
 
 
             Username = userName;
@@ -88,6 +89,7 @@ namespace MacroGoat.Areas.Identity.Pages.Account.Manage
                 FirstName = firstName,
                 LastName = lastName,
                 ProfilePicture = profilePicture // name string only
+     
             };
         }
 

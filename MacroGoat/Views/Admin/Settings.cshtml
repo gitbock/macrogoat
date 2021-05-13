@@ -1,5 +1,62 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿
+@model MgSettings
+
+<form id="settings_form" method="post">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div id="accordion" class="shadow">
+        <div class="card">
+            <div class="card-header" id="MacroGoatSettings">
+                <h6 class="mb-0">
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#MacroGoatSettings_" aria-expanded="true" aria-controls="MacroGoatSettings_" type="button">
+                        <span class="font-weight-bold">General Settings</span>
+                    </button>
+                </h6>
+            </div>
+
+            <div id="MacroGoatSettings_" class="collapse show" aria-labelledby="MacroGoatSettings" data-parent="#accordion">
+                <div class="card-body">
+                    <!-- OPTION -->
+                    <div class="row">
+                        <div class="col-3 font-italic">
+                            @nameof(Model.DeleteFilesAfterSign)
+                        </div>
+                        <div class="col-6">
+                            @Model.DeleteFilesAfterSign.Description
+                        </div>
+                        <div class="col-3">
+                            <input type="text" asp-for="DeleteFilesAfterSign.Value" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card">
+            <div class="card-header" id="FileSettings">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#FileSettings_" aria-expanded="false" aria-controls="FileSettings_" type="button">
+                        <span class="font-weight-bold">File Settings</span>
+                    </button>
+                </h5>
+            </div>
+            <div id="FileSettings_" class="collapse" aria-labelledby="FileSettings" data-parent="#accordion">
+                <div class="card-body">
+                    <!-- OPTION -->
+                    <div class="row mb-2">
+                        <div class="col-3 font-italic">
+                            @nameof(Model.FileSettings.ProfilePicturePath)
+                        </div>
+                        <div class="col-6">
+                            @Model.FileSettings.ProfilePicturePath.Description
+                        </div>
+                        <div class="col-3">
+                            <input type="text" asp-for="FileSettings.ProfilePicturePath.Value" />
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+    <button id="save-settings-button" type="submit" class="btn btn-primary mt-4">Save</button>
+</form>
