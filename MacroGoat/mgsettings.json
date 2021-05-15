@@ -8,5 +8,19 @@
       "Value": "data/profile_pictures",
       "Description": "webserver directory for storing profile pictures"
     }
-  }
+  },
+    "ApiSettings": {
+        "AdhocSignerURL": {
+            "Value": "https://localhost:44319/api/Signer/RequestSigning",
+            "Description": "API endpoint for posting files for adhoc signing"
+        },
+        "SignerURL": {
+            "Value": "https://localhost:44319/api/Signer/RequestSigning",
+            "Description": "API endpoint for posting files for signing with pre-configured options"
+        },
+        "VerifyURL": {
+            "Value": "https://localhost:44319/api/Signer/Verify",
+            "Description": "API endpoint for posting files for verifying signature"
+        }
+    }
 }

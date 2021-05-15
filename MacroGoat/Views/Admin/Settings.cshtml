@@ -7,8 +7,8 @@
         <div class="card">
             <div class="card-header" id="MacroGoatSettings">
                 <h6 class="mb-0">
-                    <button class="btn btn-link" data-toggle="collapse" data-target="#MacroGoatSettings_" aria-expanded="true" aria-controls="MacroGoatSettings_" type="button">
-                        <span class="font-weight-bold">General Settings</span>
+                    <button class="btn btn-link" data-toggle="collapse" data-target="#MacroGoatSettings_" aria-expanded="false" aria-controls="MacroGoatSettings_" type="button">
+                        <span class="font-weight-bold">General Settings</span><i class="fas fa-angle-down ml-3"></i>
                     </button>
                 </h6>
             </div>
@@ -17,24 +17,25 @@
                 <div class="card-body">
                     <!-- OPTION -->
                     <div class="row">
-                        <div class="col-3 font-italic">
+                        <div class="col-2 font-italic">
                             @nameof(Model.DeleteFilesAfterSign)
                         </div>
-                        <div class="col-6">
+                        <div class="col-5">
                             @Model.DeleteFilesAfterSign.Description
                         </div>
-                        <div class="col-3">
-                            <input type="text" asp-for="DeleteFilesAfterSign.Value" />
+                        <div class="col-5">
+                            <input class="form-control-range" type="text" asp-for="DeleteFilesAfterSign.Value" />
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+        <!-- SECTION -->
         <div class="card">
             <div class="card-header" id="FileSettings">
                 <h5 class="mb-0">
                     <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#FileSettings_" aria-expanded="false" aria-controls="FileSettings_" type="button">
-                        <span class="font-weight-bold">File Settings</span>
+                        <span class="font-weight-bold">File Settings</span><i class="fas fa-angle-down ml-3"></i>
                     </button>
                 </h5>
             </div>
@@ -42,17 +43,67 @@
                 <div class="card-body">
                     <!-- OPTION -->
                     <div class="row mb-2">
-                        <div class="col-3 font-italic">
+                        <div class="col-2 font-italic">
                             @nameof(Model.FileSettings.ProfilePicturePath)
                         </div>
-                        <div class="col-6">
+                        <div class="col-5">
                             @Model.FileSettings.ProfilePicturePath.Description
                         </div>
-                        <div class="col-3">
-                            <input type="text" asp-for="FileSettings.ProfilePicturePath.Value" />
+                        <div class="col-5">
+                            <input class="form-control-range" type="text" asp-for="FileSettings.ProfilePicturePath.Value" />
                         </div>
                     </div>
 
+                </div>
+            </div>
+        </div>
+        <!-- SECTION -->
+        <div class="card">
+            <div class="card-header" id="ApiSettings">
+                <h5 class="mb-0">
+                    <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#ApiSettings_" aria-expanded="false" aria-controls="ApiSettings_" type="button">
+                        <span class="font-weight-bold">API Settings</span><i class="fas fa-angle-down ml-3"></i>
+                    </button>
+                </h5>
+            </div>
+            <div id="ApiSettings_" class="collapse" aria-labelledby="ApiSettings" data-parent="#accordion">
+                <div class="card-body">
+                    <!-- OPTION -->
+                    <div class="row mb-2">
+                        <div class="col-2 font-italic">
+                            @nameof(Model.ApiSettings.AdhocSignerURL)
+                        </div>
+                        <div class="col-5">
+                            @Model.ApiSettings.AdhocSignerURL.Description
+                        </div>
+                        <div class="col-5">
+                            <input class="form-control-range" type="text" asp-for="ApiSettings.AdhocSignerURL.Value" />
+                        </div>
+                    </div>
+                    <!-- OPTION -->
+                    <div class="row mb-2">
+                        <div class="col-2 font-italic">
+                            @nameof(Model.ApiSettings.SignerURL)
+                        </div>
+                        <div class="col-5">
+                            @Model.ApiSettings.SignerURL.Description
+                        </div>
+                        <div class="col-5">
+                            <input class="form-control-range" type="text" asp-for="ApiSettings.SignerURL.Value" />
+                        </div>
+                    </div>
+                    <!-- OPTION -->
+                    <div class="row mb-2">
+                        <div class="col-2 font-italic">
+                            @nameof(Model.ApiSettings.VerifyURL)
+                        </div>
+                        <div class="col-5">
+                            @Model.ApiSettings.VerifyURL.Description
+                        </div>
+                        <div class="col-5">
+                            <input class="form-control-range" type="text" asp-for="ApiSettings.VerifyURL.Value" />
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>

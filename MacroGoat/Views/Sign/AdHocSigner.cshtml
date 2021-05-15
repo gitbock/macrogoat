@@ -4,76 +4,127 @@
 
 <h2>AdHocSigner</h2>
 
-<div class="row mb-3">
-    <div class="col-12">
-        <div class="card">
-            <div class="card-body bg-light">
-                This is the Ad Hoc Signer. No config needed! Just select the Macro-enabled office file and the certificate file for
-                signing!
-            </div>
-        </div>
-    </div>
-</div>
+
+@using MacroGoat.Services
+@inject GHelperService hlp
+@{
+    var mgsettings = hlp.MgSettings;
+}
+
 <div class="row">
-    <div class="container">
-        <div asp-validation-summary="All" class="text-danger"></div>
-    </div>
-</div>
+    <div class="col-12">
 
-<form method="post" enctype="multipart/form-data" id="adhocsigner" action="https://localhost:44319/api/Signer/RequestSigning">
-    <div class="row">
 
-        <div class="col-md-6">
-            <div class="card">
-                <h4 class="card-header">Select Office File for signing</h4>
-                <div class="card-body">
-                    <input name="OfficeFile" class="form-control-file" type="file" />
-                </div>
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-info-circle mr-3"></i>Info</h6>
             </div>
-
-        </div>
-        <div class="col-md-6 mb-4">
-            <div class="card">
-                <h4 class="card-header">Select Cert File for signing</h4>
-                <div class="card-body">
-                    <input name="CertFile" class="form-control-file" type="file" />
-                    <label name="CertPw-label" class="form-check-label mt-3">Cert Password</label>
-                    <input name="CertPw" class="form-control" type="password"/>
-                    <label name="analyse-label" class="form-check-label mt-3">Analyse file before signing</label>
-                    <input name="analyse" class="form-control" type="checkbox" value="true"/>
-                </div>
-            </div>
-            
-        </div>
-        <div class="container">
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </div>
-
-    </div>
-</form>
-
-
-<form method="post" enctype="multipart/form-data" id="checker" action="https://localhost:44319/api/Signer/Verify">
-    <div class="row mt-5">
-
-                <div class="card">
-                    <h4 class="card-header">Select Office File for Checking</h4>
-                    <div class="card-body">
-                        <input name="OfficeFile" class="form-control" type="file" />
-                        <span name="OfficeFile" class="text-danger"></span>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        This is the Ad Hoc Signer. No config needed! Just select the Macro-enabled office file and the certificate file for
+                        signing. <br />
+                        File is uploaded and queued for analysing / signing. You will receive a download link of your signed file
+                        if signing was successful.<br />
+                        If checkbox is selected, file is analysed before signing.
                     </div>
                 </div>
+                <div class="row border-left-danger mt-3">
+                    <div class="col-12">
+                        <a href="#" class="btn btn-danger btn-circle btn-lg">
+                            <i class="fas fa-exclamation-triangle"></i>
+                        </a>
+                        <span class="text-danger font-weight-bolder">Warning!</span>
+                        <p class="text-danger font-weight-bold pt-2">
+                            Only use this operation for testing porpuses. Never upload your real certificate containing your private key to any
+                            website. Never post your PW of your cert file to any website!
+                        </p>
+                    </div>
+                    
+                </div>
 
-            <div class="container">
-                <button type="submit" class="btn btn-primary">Submit</button>
             </div>
+        </div>
     </div>
+</div>
+
+<form method="post" enctype="multipart/form-data" id="checker" action="@mgsettings.ApiSettings.AdhocSignerURL.Value">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Select Files for Signing</h6>
+                </div>
+                <div class="card-body">
+                    <!-- Office file -->
+                    <div class="form-group">
+                        <label for="officefileselect" class="form-check-label">Select Office File containing macros to be signed</label>
+                        <input id="officefileselect" name="OfficeFile" class="form-control-file mt-1" type="file" />
+                    </div>
+
+                    <hr class="sidebar-divider my-4">
+
+                    <!-- Cert file -->
+                    <div class="form-group">
+                        <label for="certfileselect" class="form-check-label">Select Cert File to be used for signing</label>
+                        <input id="certfileselect" name="CertFile" class="form-control-file mt-1" type="file" />
+
+                        <label for="certpwfield" name="CertPw-label" class="form-check-label mt-3">Cert Password</label>
+                        <input id="certpwfield" name="CertPw" class="form-control" type="password" />
+                        <small id="certpwfieldhelp" class="form-text text-muted">Needed only if cert file / key is PW protected</small>
+                    </div>
+
+                    <hr class="sidebar-divider my-4">
+
+                    <!-- Analyse file -->
+                    <div class="form-group">
+                        <input id="vtanalysecheckbox" name="analyse" class="" type="checkbox" value="true" />
+                        <label for="vtanalysecheckbox" name="analyse-label" class="form-check-label">Analyse file before signing</label>
+                    </div>
+
+
+                    <button type="submit" class="btn btn-success btn-icon-split mt-2">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-stamp"></i>
+                        </span>
+                        <span class="text">Request Signing</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary"> Result</h6>
+                </div>
+                <div class="card-body">
+                    <div class="font-weight-light font-italic">
+                        Result will be shown here.
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    
 </form>
 
 
 
-@section Scripts{ 
+
+
+
+
+
+
+@section Scripts{
     <partial name="_ValidationScriptsPartial" />
 }
- 
+
+
+
+
+
+
+
 

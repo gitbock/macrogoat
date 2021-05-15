@@ -154,6 +154,10 @@ namespace MacroGoat.Services
             //Description must not be overwritten. Better way??
             newSettings.DeleteFilesAfterSign.Description = MgSettings.DeleteFilesAfterSign.Description;
             newSettings.FileSettings.ProfilePicturePath.Description = MgSettings.FileSettings.ProfilePicturePath.Description;
+            newSettings.ApiSettings.AdhocSignerURL.Description = MgSettings.ApiSettings.AdhocSignerURL.Description;
+            newSettings.ApiSettings.SignerURL.Description = MgSettings.ApiSettings.SignerURL.Description;
+            newSettings.ApiSettings.VerifyURL.Description = MgSettings.ApiSettings.VerifyURL.Description;
+
             
             using (StreamWriter file = File.CreateText(@"mgsettings.json"))
             {
@@ -166,6 +170,7 @@ namespace MacroGoat.Services
             readMgSettings();
         }
 
+        
 
     }
 }

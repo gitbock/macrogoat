@@ -42,8 +42,6 @@ namespace MacroGoat.Controllers
             {
                 _hlp.writeMgSettings(settings);
             }
-
-
             
             return View(settings);
         }
