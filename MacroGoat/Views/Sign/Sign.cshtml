@@ -1,5 +1,120 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
+﻿@{
+    ViewData["Title"] = "Signer";
 }
+
+<h2>Sign Office File</h2>
+
+
+@using MacroGoat.Services
+@inject GHelperService hlp
+@{
+    var mgsettings = hlp.MgSettings;
+}
+<script type="text/javascript" src="@Url.Content("~/js/ApiActivityMonitor.js")"></script>
+
+<div class="row">
+    <div class="col-12">
+        <div class="card shadow mb-4">
+            <div class="card-header py-3">
+                <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-info-circle mr-3"></i>Info</h6>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-12">
+                        Using this page as authenticated user you may use the predefined settings your admin has set for you.
+                        No need to deal with a certificate. You can only upload your macro-enabled office file. It will be
+                        signed using the certificate your admin configured for you.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<form method="post" enctype="multipart/form-data" id="usersignerform" action="@mgsettings.ApiSettings.SignerURL.Value/MacroGoat">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Select Files for Signing</h6>
+                </div>
+                <div class="card-body">
+                    <!-- Office file -->
+                    <div class="form-group">
+                        <label for="officefileselect" class="form-check-label">Select Office File containing macros to be signed</label>
+                        <input id="officefileselect" name="OfficeFile" class="form-control-file mt-1" type="file" />
+                    </div>
+
+                    <hr class="sidebar-divider my-4">
+
+                    <!-- Analyse file -->
+                    <div class="form-group">
+                        <input id="vtanalysecheckbox" name="analyse" class="" type="checkbox" value="true" />
+                        <label for="vtanalysecheckbox" name="analyse-label" class="form-check-label">Analyse file before signing by Virustotal</label>
+                    </div>
+                    <div class="form-group">
+                        <input id="emailmecheckbox" name="emailme" class="" type="checkbox" value="true" disabled />
+                        <label for="emailmecheckbox" name="emailme-label" class="form-check-label">Send me the signed file by email [not implemented yet]</label>
+                    </div>
+                    <div class="form-group">
+                        <input id="onedrivecheckbox" name="sendonedrive" class="" type="checkbox" value="true" disabled />
+                        <label for="onedrivecheckbox" name="sendonedrive-label" class="form-check-label">Upload signed file to my Onedrive folder [not implemented yet]</label>
+                    </div>
+
+
+                    <button type="submit" class="btn btn-success btn-icon-split mt-2">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-stamp"></i>
+                        </span>
+                        <span class="text">Request Signing</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-sm-12">
+            <div class="card shadow h-100">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Result</h6>
+                </div>
+                <div class="card-body">
+                    <div class="row" id="statusrow">
+                        <div class="col-md-1" id="statusicon">
+                            <!-- will be filled by JS -->
+                        </div>
+                        <div class="col-md-11">
+                            <p class="mx-2" id="statusmessage">
+                                <!-- will be filled by JS -->
+                            </p>
+                        </div>
+                    </div>
+
+                    <hr class="sidebar-divider my-4">
+
+                    <div class="row">
+
+                        <div class="col-md-12" id="apiresultrow">
+                            <!-- will be replaced by JS -->
+                            <p class="text-center font-weight-light font-italic">
+                                Result will be shown here.
+                            </p>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}
+
+
+
+
+
+
+
+

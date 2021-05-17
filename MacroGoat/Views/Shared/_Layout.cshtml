@@ -108,26 +108,18 @@
                 </div>
 
 
-                <!-- Nav Item - Pages Collapse Menu -->
                 <li class="nav-item">
-                    <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseTwo"
-                       aria-expanded="true" aria-controls="collapseTwo">
+                    <a class="nav-link" asp-controller="Sign" asp-action="Sign">
                         <i class="fas fa-fw fa-user"></i>
-                        <span>Signing</span>
+                        <span>Sign Office File</span>
                     </a>
-                    <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionSidebar">
-                        <div class="bg-white py-2 collapse-inner rounded">
-                            <h6 class="collapse-header">Files</h6>
-                            <a class="collapse-item" asp-controller="Sign" asp-action="Sign">Sign Office File</a>
-                        </div>
-                    </div>
+                    
                 </li>
-
 
                 <!-- Divider -->
                 <hr class="sidebar-divider">
 
-                <!-- Nav Item - Utilities Collapse Menu -->
+                <!-- Nav Item - Admin Collapse Menu -->
                 <li class="nav-item">
                     <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseUtilities"
                        aria-expanded="true" aria-controls="collapseUtilities">
@@ -141,7 +133,7 @@
 
                             @if (User.IsInRole("SuperAdmin") || User.IsInRole("CertAdmin"))
                             {
-                                
+
                                 <a class="collapse-item" asp-controller="Admin" asp-action="CertManager">Cert Manager</a>
                             }
                             @if (User.IsInRole("SuperAdmin"))

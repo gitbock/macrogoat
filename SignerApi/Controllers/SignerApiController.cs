@@ -320,6 +320,153 @@ namespace SignerApi.Controllers
         }
 
 
+        /// <summary>
+        /// Receives an office file, which is signed with settings and certificate tied to the profileName
+        /// Profile is defined in appsettings.json file
+        /// </summary>
+        /// <param name="officeFile">office file including macros to be signed</param>
+        /// <param name="profileName">ProfileName to be used for signing</param>
+        /// <param name="analyse">analysis requested before signing</param>
+        /// <returns>JSON Status Page for this activity</returns>
+        [HttpPost]
+        [Route("RequestSigning/{profileName}")]
+        public IActionResult RequestSigning(IFormFile officeFile, [FromForm] bool analyse, string profileName)
+        {
+            //prepare ac (used for logging / error return as well)
+            ApiActivity ac = new ApiActivity();
+            ac.Operation = ApiActivity.ApiOperation.RequestSigning;
+            ac.ClientIPAddress = HttpContext.Connection.RemoteIpAddress.ToString();
+            ac.StatusUrl = GHelper.generateUrl(GHelper.UrlType.StatusUrl, ac, _httpctx);
+            ac.DownloadUrl = GHelper.generateUrl(GHelper.UrlType.DownloadUrl, ac, _httpctx);
+
+            if (officeFile == null)
+            {
+                ac.Status = ApiActivity.ApiStatus.Error;
+                ac.Message = "Office File not submitted. Required for signing!";
+                _l.Error(ac.Message);
+                _asvc.addUpdateApiActivity(ac);
+                return Content(ac.getWebresult());
+            }
+
+            ac.UserOfficeFilename = officeFile.FileName;
+            ac.Message = $"Starting request Signing with {officeFile.FileName} and profile ID {profileName}...";
+            
+            //--- check if valid profile name was provided
+
+            //check if secrets file present
+            string secretFilename = "secrets.json";
+            if (!System.IO.File.Exists(secretFilename))
+            {
+                ac.Status = ApiActivity.ApiStatus.Error;
+                ac.Message = "secrets file not found for reading profiles";
+                _l.Error(ac.Message);
+                _asvc.addUpdateApiActivity(ac);
+                return Content(ac.getWebresult());
+
+            }
+
+            //read secrets config
+            JObject jsonConfig = JObject.Parse(System.IO.File.ReadAllText(secretFilename));
+
+            var profileCertFile = (string)jsonConfig["SigningProfiles"][profileName]["CertFile"];
+            var profileCertPw = (string)jsonConfig["SigningProfiles"][profileName]["CertPw"];
+
+            if( profileCertFile == null || profileCertPw == null)
+            {
+                ac.Status = ApiActivity.ApiStatus.Error;
+                ac.Message = $"No certfile or certPW found for Profilename {profileName}";
+                _l.Error(ac.Message);
+                _asvc.addUpdateApiActivity(ac);
+                return Content(ac.getWebresult());
+            }
+            ac.UserCertFilename = profileCertFile;
+            
+
+            //check if cert file from settings is really on filesystem
+            var systemCertFileName = Path.Combine(GHelper.getCertFilesSystemDir(_webHostEnv, _conf), ac.UserCertFilename);
+            if (!System.IO.File.Exists(systemCertFileName)){
+                ac.Status = ApiActivity.ApiStatus.Error;
+                ac.Message = $"certfile {ac.SystemCertFilename} not found for Profilename {profileName}";
+                _l.Error(ac.Message);
+                _asvc.addUpdateApiActivity(ac);
+                return Content(ac.getWebresult());
+            }
+            ac.SystemCertFilename = systemCertFileName;
+
+            // Save certPW encyrpted in AC, to be decrypted by signer service later. 
+            // todo: better PW handling -> was already in cleartext in secrets file
+            _l.Debug($"Provided cert PW = \"{profileCertPw}\"");
+            // Read secrets
+            JObject secretsConfig = JObject.Parse(System.IO.File.ReadAllText(@"secrets.json")); //secrets.json file not checked in. .gitignore
+            var aesKey = (string)secretsConfig["aesKey"];
+            var encryptedCertPw = EncryptProvider.AESEncrypt(profileCertPw, aesKey);
+            // save pw encrypted in DB
+            ac.EncCertPw = encryptedCertPw;
+
+
+            //------- CHECKS
+
+            //check for valid file extension
+            string officeFileExt = Path.GetExtension(officeFile.FileName.ToLowerInvariant());
+            if (!GHelper.fileHasAllowedExtension(GHelper.ExtensionType.OfficeFile, officeFileExt))
+            {
+
+                ac.Status = ApiActivity.ApiStatus.Error;
+                ac.Message = $"Office File extension {officeFileExt} not valid!";
+                _l.Error(ac.Message);
+                _asvc.addUpdateApiActivity(ac);
+                return Content(ac.getWebresult());
+            }
+
+            // check magic number file types
+            if (!(GHelper.fileHasValidFormat(GHelper.ExtensionType.OfficeFile, officeFile.OpenReadStream())))
+            {
+                ac.Status = ApiActivity.ApiStatus.Error;
+                ac.Message = $"Office File {officeFile.FileName} not a valid office file!";
+                _l.Error(ac.Message);
+                _asvc.addUpdateApiActivity(ac);
+                return Content(ac.getWebresult());
+            }
+
+
+            // SAVE FILES
+            //save office file with unique filename, not enumerable
+            string uniFilenameOfficeFile = GHelper.createUniqueFileName(officeFile.FileName);
+            string systemFolderOfficeFile = GHelper.getOfficeFilesSystemDir(_webHostEnv, _conf);
+            string systemFileNameOfficeFile = Path.Combine(systemFolderOfficeFile, uniFilenameOfficeFile);
+            ac.SystemOfficeFilename = systemFileNameOfficeFile;
+
+            // create dir if not exist
+            System.IO.Directory.CreateDirectory(systemFolderOfficeFile);
+            _l.Debug($"Saving Office file to {systemFolderOfficeFile}");
+            using (var fileStream = new FileStream(systemFileNameOfficeFile, FileMode.Create))
+            {
+                officeFile.CopyTo(fileStream);
+            }
+
+            if (analyse)
+            {
+                // Queue foor ANALYSING
+                ac.Status = ApiActivity.ApiStatus.QueuedAnalysis;
+                ac.Message = "File queued for analysis";
+                _asvc.addUpdateApiActivity(ac);
+                _l.Debug("Analysis requested, queuing for analysis...");
+            }
+            else
+            {
+                // Queue for SIGNING
+                ac.Status = ApiActivity.ApiStatus.QueuedSigning;
+                ac.Message = "File queued for signing";
+                _asvc.addUpdateApiActivity(ac);
+                _l.Debug("NO analysis requested, queuing for signing at once...");
+            }
+
+            // RETURN STATUS 
+            _l.Debug($"Returning Queued API Status for Key {ac.UniqueKey}");
+            return Content(ac.getWebresult());
+        }
+    
+
 
         /// <summary>
         /// Returns a File for requested key.

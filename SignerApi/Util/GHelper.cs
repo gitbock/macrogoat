@@ -175,7 +175,8 @@ namespace SignerApi.Util
         {
             var scheme = httpctx.HttpContext.Request.Scheme;
             var host = httpctx.HttpContext.Request.Host;
-            var apiPath = httpctx.HttpContext.Request.Path.Value.Substring(0, httpctx.HttpContext.Request.Path.Value.LastIndexOf("/"));
+            //var apiPath = httpctx.HttpContext.Request.Path.Value.Substring(0, httpctx.HttpContext.Request.Path.Value.LastIndexOf("/"));
+            var apiPath = "/api/Signer";
 
             if (urltype == UrlType.DownloadUrl)
             {
