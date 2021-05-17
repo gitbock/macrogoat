@@ -64,15 +64,10 @@
             $('#accordionSidebar').notify(msg, { position: "right top", autoHide: false });
 
             $('.notifyjs-container').click(function () {
-                window.location.href = "Identity/Account/Manage/ChangePassword";
-            });
+                window.location.href = '@Url.Page("/Account/Manage/Index", new { area = "Identity"})'
+                });
         });
-
-
-
     </script>
-
-
 }
 
 

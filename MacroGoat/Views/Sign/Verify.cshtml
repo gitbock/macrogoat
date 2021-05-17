@@ -4,10 +4,10 @@
     var mgsettings = hlp.MgSettings;
 }
 
+<script type="text/javascript" src="@Url.Content("~/js/ApiActivityMonitor.js")"></script>
+
 <div class="row">
     <div class="col-12">
-
-
         <div class="card shadow mb-4">
             <div class="card-header py-3">
                 <h6 class="m-0 font-weight-bold text-primary"><i class="fas fa-info-circle mr-3"></i>Info</h6>
@@ -20,16 +20,15 @@
 </div>
 
 <div class="row">
-    <div class="col-md-6">
-        <form method="post" enctype="multipart/form-data" id="checker" action="@mgsettings.ApiSettings.VerifyURL.Value">
-
+    <div class="col-lg-6 col-sm-12">
+        <form method="post" enctype="multipart/form-data" id="verifyform" action="@mgsettings.ApiSettings.VerifyURL.Value">
                 <div class="card shadow h-100">
                     <div class="card-header py-3">
                         <h6 class="m-0 font-weight-bold text-primary"> Select Office File for Verifying</h6>
                     </div>
                     <div class="card-body">
                         <input name="OfficeFile" class="form-control-file" type="file" />
-                        <button type="submit" class="btn btn-success btn-icon-split mt-5">
+                        <button id="submitBtnVerify" type="submit" class="btn btn-success btn-icon-split mt-5">
                             <span class="icon text-white-50">
                                 <i class="fas fa-check"></i>
                             </span>
@@ -39,23 +38,41 @@
                 </div>
         </form>
     </div>
-    <div class="col-md-6">
+    <div class="col-lg-6 col-sm-12">
         <div class="card shadow h-100">
             <div class="card-header py-3">
-                <h6 class="m-0 font-weight-bold text-primary"> Result</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Result</h6>
             </div>
             <div class="card-body">
-                <div class="font-weight-light font-italic">
-                    Result will be shown here.
+                <div class="row" id="statusrow">
+                    <div class="col-md-1" id="statusicon">
+                        <!-- will be filled by JS -->
+                    </div>
+                    <div class="col-md-11" >
+                        <p class="mx-2" id="statusmessage">
+                            <!-- will be filled by JS -->
+                        </p>
+                    </div>
                 </div>
+
+                <hr class="sidebar-divider my-4">
                 
+                <div class="row" >
+                    
+                    <div class="col-md-12" id="apiresultrow">
+                        <!-- will be replaced by JS -->
+                        <p class="text-center font-weight-light font-italic">
+                            Result will be shown here.
+                        </p>
+                        
+                    </div>
+                </div>
+
+
             </div>
         </div>
     </div>
 </div>
-
-
-
 
 
 

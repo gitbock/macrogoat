@@ -21,6 +21,10 @@
         "VerifyURL": {
             "Value": "https://localhost:44319/api/Signer/Verify",
             "Description": "API endpoint for posting files for verifying signature"
+        },
+        "StatusURL": {
+            "Value": "https://localhost:44319/api/Signer/Status",
+            "Description": "API endpoint for querying Status of queued requests"
         }
     }
 }

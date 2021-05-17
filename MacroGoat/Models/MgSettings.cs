@@ -47,6 +47,7 @@ namespace MacroGoat.Models
             public Option_AdhocSignerURL AdhocSignerURL { get; set; }
             public Option_SignerURL SignerURL { get; set; }
             public Option_VerifyURL VerifyURL { get; set; }
+            public Option_StatusURL StatusURL { get; set; }
 
         }
 
@@ -71,6 +72,16 @@ namespace MacroGoat.Models
         }
 
         public class Option_VerifyURL
+        {
+            [Required]
+            [StringLength(100)]
+            public string Value { get; set; }
+
+            [StringLength(500)]
+            public string Description { get; set; }
+        }
+
+        public class Option_StatusURL
         {
             [Required]
             [StringLength(100)]

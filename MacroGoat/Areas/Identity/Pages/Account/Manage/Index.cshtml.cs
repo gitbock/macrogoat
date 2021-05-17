@@ -163,6 +163,14 @@ namespace MacroGoat.Areas.Identity.Pages.Account.Manage
                 // store image if one was posted
                 if (Input.ProfileImage != null)
                 {
+                    //first check if it's a real image file, no hacking stuff
+                    if (!_hlp.isImageFile(Input.ProfileImage.OpenReadStream()))
+                    {
+                        //not an image file
+                        StatusMessage = "Error: Profile Image File is not valid. Cancelled update of picture!";
+                        return RedirectToPage();
+                    }
+
                     await StoreProfilePicureAsync(Input, user);
                     await _userManager.UpdateAsync(user);
                 }
@@ -184,6 +192,7 @@ namespace MacroGoat.Areas.Identity.Pages.Account.Manage
         /// <returns></returns>
         private async Task<string> StoreProfilePicureAsync(InputModel model, GUser user)
         {
+                       
             // unique, random file name so it cannot be enumerated!
             string uniqueFileName = null;
 

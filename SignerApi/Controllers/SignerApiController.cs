@@ -48,7 +48,7 @@ namespace SignerApi.Controllers
             ApiActivity ac = new ApiActivity();
             ac.ClientIPAddress = Request.HttpContext.Connection.RemoteIpAddress.ToString();
             ac.Operation = ApiActivity.ApiOperation.Verify;
-            ac.Message = $"Check Office File started with filename {officeFile.FileName}";
+            ac.Message = $"Check Office File started";
             ac.Status = ApiActivity.ApiStatus.Verifying;
             ac.StatusUrl = GHelper.generateUrl(GHelper.UrlType.StatusUrl, ac, _httpctx);
             ac.DownloadUrl = GHelper.generateUrl(GHelper.UrlType.DownloadUrl, ac, _httpctx);
@@ -303,8 +303,8 @@ namespace SignerApi.Controllers
 
 
                 // RETURN STATUS PAGE
-                _l.Debug($"Returning Status page for Key {ac.UniqueKey}");
-                return RedirectToAction("Status", new { key = ac.UniqueKey });
+                _l.Debug($"Returning Queued API Status for Key {ac.UniqueKey}");
+                return Content(ac.getWebresult());
 
 
             }

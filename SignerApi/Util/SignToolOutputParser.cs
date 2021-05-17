@@ -73,6 +73,8 @@ namespace SignerApi.Util
                         ac.Message = ac.Message = $"File {ac.UserOfficeFilename} verified successfully.";
                         return ac;
                     }
+
+                    
                 }
                 if (op == SignToolOperation.Sign)
                 {
@@ -92,6 +94,18 @@ namespace SignerApi.Util
             }
             if (stdErr != null && stdErr.Length > 0)
             {
+                
+                // If file was analysed for signatures, but none found -> also success
+                string patSigNotFound = @"SignTool Error: No signature found";
+                Match mSigNotFound = Regex.Match(stdErr, patSigNotFound, RegexOptions.Multiline);
+                if (mSigNotFound.Success) // signature could be read from file successfully!
+                {
+                    ac.Status = ApiActivity.ApiStatus.Ready;
+                    ac.Message = ac.Message = $"File verified successfully: No signature found";
+                    return ac;
+                }
+
+                // all other errors
                 ac.Status = ApiActivity.ApiStatus.Error;
                 ac.Message = stdErr.Trim();
             }

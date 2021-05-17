@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using FileSignatures;
+using FileSignatures.Formats;
 using MacroGoat.Models;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
@@ -64,12 +66,12 @@ namespace MacroGoat.Services
         /// returns absolut system path of profilepictures dir. Use for file system operations
         /// </summary>
         /// <returns>path</returns>
-        public  string getProfilePicturesSystemDir()
+        public string getProfilePicturesSystemDir()
         {
             return Path.Combine(_webenv.WebRootPath, getProfilePicturesWebserverDir());
         }
 
-        
+
 
 
 
@@ -148,7 +150,7 @@ namespace MacroGoat.Services
 
         }
 
-        
+
         public void writeMgSettings(MgSettings newSettings)
         {
             //Description must not be overwritten. Better way??
@@ -157,8 +159,9 @@ namespace MacroGoat.Services
             newSettings.ApiSettings.AdhocSignerURL.Description = MgSettings.ApiSettings.AdhocSignerURL.Description;
             newSettings.ApiSettings.SignerURL.Description = MgSettings.ApiSettings.SignerURL.Description;
             newSettings.ApiSettings.VerifyURL.Description = MgSettings.ApiSettings.VerifyURL.Description;
+            newSettings.ApiSettings.StatusURL.Description = MgSettings.ApiSettings.StatusURL.Description;
 
-            
+
             using (StreamWriter file = File.CreateText(@"mgsettings.json"))
             {
                 JsonSerializer serializer = new JsonSerializer();
@@ -170,7 +173,27 @@ namespace MacroGoat.Services
             readMgSettings();
         }
 
-        
 
+        /// <summary>
+        /// Checks magic number of file.
+        /// </summary>
+        /// <param name="fs">filestream to check</param>
+        /// <returns>true if image</returns>
+        public bool isImageFile(Stream fs)
+        {
+            bool valid = false;
+            var fileinspector = new FileFormatInspector();
+            FileFormat fileFormat;
+
+            using (fs)
+            {
+                fileFormat = fileinspector.DetermineFileFormat(fs);
+                if (fileFormat is Image)
+                {
+                    valid = true;
+                }
+            }
+            return valid;
+        }
     }
 }

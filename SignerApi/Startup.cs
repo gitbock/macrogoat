@@ -33,6 +33,8 @@ namespace SignerApi
 
         public IConfiguration Configuration { get; }
 
+        public string CorsPolicy = "MacroGoatCorsPolicy";
+
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -58,7 +60,22 @@ namespace SignerApi
             // configuration (resolvers, counter key builders)
             services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
 
-
+            // Configure CORS to allow origins which can query API by appsettings.json entries
+            var section = Configuration.GetSection("CORS:Origins");
+            string[] corsOrigins = section.Get<string[]>();
+            if (corsOrigins == null)
+            {
+                //default if not present in config
+                corsOrigins = new string[] { "http://localhost", "https://localhost" };
+            }
+            services.AddCors(options =>
+            {
+                options.AddPolicy(name: CorsPolicy,
+                                  builder =>
+                                  {
+                                      builder.WithOrigins(corsOrigins);
+                                  });
+            });
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -99,6 +116,7 @@ namespace SignerApi
             services.AddHttpContextAccessor();
 
 
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -118,6 +136,8 @@ namespace SignerApi
 
             app.UseRouting();
 
+            app.UseCors(CorsPolicy);
+
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
@@ -127,6 +147,8 @@ namespace SignerApi
 
             // for debugging swagger
             app.UseDeveloperExceptionPage();
+
+            
 
         }
     }
