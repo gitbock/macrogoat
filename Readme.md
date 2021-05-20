@@ -22,13 +22,23 @@ The idea is as follows:
 MacroGoat provides three funtions
 1. Verify Signature
 You may upload an office file to check the signature. If it's signed already, informatin about the certificate is shown.
+![Verify](/img/verify_demo.png)
 
 2. AdHoc Signer
 AdHoc Signer can be used without any authentication. Using AdHoc Signer you can upload an office file and a cert file containing the private key.
 You can choose to analyse your office file with VirusTotal first. If the file is clean, the office file is signed by the uploaded certificate. 
+![AdHoc1](/img/adhoc_demo1.png)
+![AdHoc2](/img/adhoc_demo2.png)
 
 3. Signing using preconfigured certificate
 After authentication, a user can upload office file. The office file is analysed and signed with the admin provided certificate. No need to upload a certificate.
+![Signing1](/img/signing1.png)
+![Signing2](/img/signing2.png)
+
+
+You can configire the GUI part for the API usage
+![Settings1](/img/settings1.png)
+![Settings2](/img/settings2.png)
 
 
 ## Architecture
@@ -44,12 +54,15 @@ web application. It basically calls the SignerAPI (see 2.)
 This is the core which analyses uploaded office files by VirusTotal and signs office files by a certificate either provided directly (AdHoc Signer) or by admin pre-configured files.
 Instead of VirusTotal you may also think of an analyser service like cuckoo sandbox running in the enterprise's private stack in the futire.
 
+![Architecture](/img/MacroGoat_Architecture.png)
+
 
 ## Security
 The app is meant to run inside a trusted network. I implemented a few security measures
 - CORS
 - Rate Limiter for the API
 - Encrypted storage of certificate PWs
+- File Extension Check of uploaded files (by plain extension and by magic byte)
 
 The app is still lacking
 - API authentication
@@ -59,6 +72,10 @@ The app is still lacking
 Because the SignerApi makes use of the signtool.exe of Microsoft as a wrapper, you need a backend which is capable of executing .exe files. By default, this means you need a 
 windows backend which can run the signtool.exe. In my test deployment both applications (GUI + SignerApi) are running on the same IIS 10 on Windows Server 2019 in MS Azure. The 
 Gui Website on port 443, the SignerApi on Port 8443.
+
+
+## I found a bug
+Yes, this is absolutely possible. I am not a programmer genius, I only wanted to learn dotnet core making use of this project. You may file in an issue.
 
 
 

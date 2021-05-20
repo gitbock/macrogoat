@@ -16,7 +16,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "img", "img", "{924B733D-3732-4B86-AD20-F56586BF1D80}"
 	ProjectSection(SolutionItems) = preProject
+		img\adhoc_demo1.png = img\adhoc_demo1.png
+		img\adhoc_demo2.png = img\adhoc_demo2.png
+		img\MacroGoat_Architecture.png = img\MacroGoat_Architecture.png
+		img\MacroGoat_StateMachine.png = img\MacroGoat_StateMachine.png
 		img\office_macro_only_signed_allowed.png = img\office_macro_only_signed_allowed.png
+		img\settings1.png = img\settings1.png
+		img\settings2.png = img\settings2.png
+		img\signing1.png = img\signing1.png
+		img\signing2.png = img\signing2.png
+		img\verify_demo.png = img\verify_demo.png
 	EndProjectSection
 EndProject
 Global
