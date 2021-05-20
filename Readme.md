@@ -36,9 +36,15 @@ After authentication, a user can upload office file. The office file is analysed
 ![Signing2](/img/signing2.png)
 
 
+<<<<<<< HEAD
 You can configure the GUI part for the API usage  
 ![Settings1](/img/settings1.png)  
 ![Settings2](/img/settings2.png)  
+=======
+You can configire the GUI part for the API usage  
+![Settings1](/img/settings1.png)
+![Settings2](/img/settings2.png)
+>>>>>>> 0b36ad5ea48422ea332a4d3a3db22487130df983
 
 
 ## Architecture
