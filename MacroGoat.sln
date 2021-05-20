@@ -5,7 +5,19 @@ VisualStudioVersion = 16.0.31025.194
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MacroGoat", "MacroGoat\MacroGoat.csproj", "{1250D75E-2363-42AD-AA4A-4B815347C2C4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SignerApi", "SignerApi\SignerApi.csproj", "{CB8B9EE1-B747-425F-ADA5-D60348435EFC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SignerApi", "SignerApi\SignerApi.csproj", "{CB8B9EE1-B747-425F-ADA5-D60348435EFC}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{6A435068-525C-4F72-AC09-E7ABA99078B9}"
+	ProjectSection(SolutionItems) = preProject
+		MacroGoat_Architecture.drawio = MacroGoat_Architecture.drawio
+		MacroGoat_StateMachine.drawio = MacroGoat_StateMachine.drawio
+		Readme.md = Readme.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "img", "img", "{924B733D-3732-4B86-AD20-F56586BF1D80}"
+	ProjectSection(SolutionItems) = preProject
+		img\office_macro_only_signed_allowed.png = img\office_macro_only_signed_allowed.png
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,6 +36,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{924B733D-3732-4B86-AD20-F56586BF1D80} = {6A435068-525C-4F72-AC09-E7ABA99078B9}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {A12B76C2-A029-4EDA-A7D6-32CD16BDEE08}

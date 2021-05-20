@@ -601,18 +601,6 @@ namespace SignerApi.Controllers
                 _asvc.addUpdateApiActivity(ac);
                 return Content(requestedStatus.getWebresult());
             }
-            
-                
-                
-
-           
-                
-
-            
-
-
-
-
         }
 
 

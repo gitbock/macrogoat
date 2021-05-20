@@ -34,5 +34,19 @@
     <Folder Include="storage\cert_files\" />
     <Folder Include="storage\office_files\" />
   </ItemGroup>
+	<ItemGroup>
+		<Content Include="lib\**">
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</Content>
+		<Content Update="secrets.json">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
+		</Content>
+		<Content Update="SignerApi.db">
+			<CopyToOutputDirectory>Never</CopyToOutputDirectory>
+			<CopyToPublishDirectory>Never</CopyToPublishDirectory>
+		</Content>
+	</ItemGroup>
+	
 
 </Project>
