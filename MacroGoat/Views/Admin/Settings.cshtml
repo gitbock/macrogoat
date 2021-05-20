@@ -13,22 +13,6 @@
                 </h6>
             </div>
 
-            <div id="MacroGoatSettings_" class="collapse show" aria-labelledby="MacroGoatSettings" data-parent="#accordion">
-                <div class="card-body">
-                    <!-- OPTION -->
-                    <div class="row">
-                        <div class="col-2 font-italic">
-                            @nameof(Model.DeleteFilesAfterSign)
-                        </div>
-                        <div class="col-5">
-                            @Model.DeleteFilesAfterSign.Description
-                        </div>
-                        <div class="col-5">
-                            <input class="form-control-range" type="text" asp-for="DeleteFilesAfterSign.Value" />
-                        </div>
-                    </div>
-                </div>
-            </div>
         </div>
         <!-- SECTION -->
         <div class="card">
@@ -102,19 +86,6 @@
                         </div>
                         <div class="col-5">
                             <input class="form-control-range" type="text" asp-for="ApiSettings.VerifyURL.Value" />
-                        </div>
-                    </div>
-
-                    <!-- OPTION -->
-                    <div class="row mb-2">
-                        <div class="col-2 font-italic">
-                            @nameof(Model.ApiSettings.StatusURL)
-                        </div>
-                        <div class="col-5">
-                            @Model.ApiSettings.StatusURL.Description
-                        </div>
-                        <div class="col-5">
-                            <input class="form-control-range" type="text" asp-for="ApiSettings.StatusURL.Value" />
                         </div>
                     </div>
                 </div>

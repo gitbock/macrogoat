@@ -8,21 +8,9 @@ namespace MacroGoat.Models
 {
     public class MgSettings
     {
-        public Option_DeleteFilesAfterSign DeleteFilesAfterSign { get; set; }
 
         public Section_FileSettings FileSettings { get; set; }
         public Section_ApiSettings ApiSettings { get; set; }
-
-        public class Option_DeleteFilesAfterSign
-        {
-            [Required]
-            [StringLength(5)]
-            public string Value { get; set; }
-            
-            [StringLength(300)]
-            public string Description { get; set; }
-
-        }
 
 
         public class Section_FileSettings
@@ -47,7 +35,7 @@ namespace MacroGoat.Models
             public Option_AdhocSignerURL AdhocSignerURL { get; set; }
             public Option_SignerURL SignerURL { get; set; }
             public Option_VerifyURL VerifyURL { get; set; }
-            public Option_StatusURL StatusURL { get; set; }
+            
 
         }
 
@@ -80,17 +68,6 @@ namespace MacroGoat.Models
             [StringLength(500)]
             public string Description { get; set; }
         }
-
-        public class Option_StatusURL
-        {
-            [Required]
-            [StringLength(100)]
-            public string Value { get; set; }
-
-            [StringLength(500)]
-            public string Description { get; set; }
-        }
-
 
 
 

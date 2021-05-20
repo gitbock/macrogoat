@@ -1,30 +1,24 @@
 {
-  "DeleteFilesAfterSign": {
-    "Value": "true",
-    "Description": "Deletes Files after Signing"
-  },
+  
   "FileSettings": {
     "ProfilePicturePath": {
       "Value": "data/profile_pictures",
       "Description": "webserver directory for storing profile pictures"
     }
   },
-    "ApiSettings": {
-        "AdhocSignerURL": {
-            "Value": "https://localhost:44319/api/Signer/RequestSigning",
-            "Description": "API endpoint for posting files for adhoc signing"
-        },
-        "SignerURL": {
-            "Value": "https://localhost:44319/api/Signer/RequestSigning",
-            "Description": "API endpoint for posting files for signing with pre-configured options"
-        },
-        "VerifyURL": {
-            "Value": "https://localhost:44319/api/Signer/Verify",
-            "Description": "API endpoint for posting files for verifying signature"
-        },
-        "StatusURL": {
-            "Value": "https://localhost:44319/api/Signer/Status",
-            "Description": "API endpoint for querying Status of queued requests"
-        }
+  "ApiSettings": {
+    "AdhocSignerURL": {
+      "Value": "https://localhost:44319/api/Signer/RequestSigning",
+      "Description": "API endpoint for posting files for adhoc signing"
+    },
+    "SignerURL": {
+        "Value": "https://localhost:44319/api/Signer/RequestSigning/MacroGoat",
+        "Description": "API endpoint for posting files for signing with pre-configured options. Add the name of the profile you want to use for signing to the API path, e.g. http://host:port/api/Signer/RequestSigning/profileName"
+    },
+    "VerifyURL": {
+      "Value": "https://localhost:44319/api/Signer/Verify",
+      "Description": "API endpoint for posting files for verifying signature"
     }
+    
+  }
 }

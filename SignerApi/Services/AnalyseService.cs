@@ -62,19 +62,19 @@ namespace SignerApi.Services
                     using (Stream fs = File.OpenRead(ac.SystemOfficeFilename))
                     {
                         // new Analyser Service start e.g. VirusTotal
-                        ac.Message = $"Checking Virustotal for known file {ac.UserOfficeFilename}...";
+                        ac.Message = $"Checking Virustotal for known file {ac.UserOfficeFilename}. This can take up to 5 Min...";
                         _asvc.addUpdateApiActivity(ac);
-                        _l.Debug(ac.Message);
+                        _l.Information(ac.Message);
 
                         // first check if file already known to VT
                         var fileReport = await vt.GetFileReportAsync(fs);
-                        _l.Debug($"File Report requested for Resource {fileReport.Resource}");
+                        _l.Information($"File Report requested for Resource {fileReport.Resource}");
                         
 
                         if (fileReport.ResponseCode == VirusTotalNet.ResponseCodes.FileReportResponseCode.Queued)
                         {
                             // file already submitted but still scanned -> not scanning again
-                            _l.Debug($"File {fileReport.SHA256} already submitted. Not scanning again. Resetting result to {ApiActivity.ApiStatus.QueuedAnalysis}");
+                            _l.Information($"File {ac.UserOfficeFilename} already submitted. Not scanning again. Resetting result to {ApiActivity.ApiStatus.QueuedAnalysis}");
                             ac.Status = ApiActivity.ApiStatus.QueuedAnalysis;
                             _asvc.addUpdateApiActivity(ac);
                         }
@@ -86,20 +86,19 @@ namespace SignerApi.Services
                             ScanResult scanResult = null;
                             // reset stream, otherwise it's posted from last position :(
                             fs.Seek(0, SeekOrigin.Begin);
-                            _l.Debug($"file not known to VT yet. ");
                             //not known to VT -> start new scan
-                            ac.Message = "File not know to VT yet. Start Scan...";
+                            ac.Message = "File not know to VT yet. Starting Scan...";
                             _asvc.addUpdateApiActivity(ac);
-                            _l.Debug(ac.Message);
+                            _l.Information(ac.Message);
                             scanResult = await vt.ScanFileAsync(fs, ac.SystemOfficeFilename);
                             if (scanResult.ResponseCode == VirusTotalNet.ResponseCodes.ScanFileResponseCode.Queued)
                             {
                                 // set to result queued to be picked up by loop next time; then Results should be already known 
                                 // and can be retrieved.
-                                ac.Message = $"File QueuedAnalysis for scan with ScanID {scanResult.ScanId}. Resetting result to {ApiActivity.ApiStatus.QueuedAnalysis}";
+                                ac.Message = $"File Queued for Analysis in VirusTotal with ScanID {scanResult.ScanId}.";
                                 ac.Status = ApiActivity.ApiStatus.QueuedAnalysis;
                                 _asvc.addUpdateApiActivity(ac);
-                                _l.Debug(ac.Message);
+                                _l.Information(ac.Message + $"Resetting result to {ApiActivity.ApiStatus.QueuedAnalysis}");
 
                             }
                             
@@ -107,7 +106,7 @@ namespace SignerApi.Services
                         if (fileReport.ResponseCode == VirusTotalNet.ResponseCodes.FileReportResponseCode.Present)
                         {
                             //Filereport here, check
-                            _l.Debug($"Filereport retrieved successfully. Checking if file file clean..");
+                            _l.Information($"Filereport retrieved successfully. Checking if file file clean..");
 
                             // how many positives are OK?
                             int maxPositives = Int32.Parse(_conf["AnalyseService:SecurityPlugins:Virustotal:MaxPositives"]);
@@ -115,18 +114,18 @@ namespace SignerApi.Services
                             if(fileReport.Positives < maxPositives)
                             {
                                 //file clean
-                                ac.Message = $"file scanned by VT has {fileReport.Positives} of max {maxPositives}. File clean! Ready for Signing";
+                                ac.Message = $"File scanned by VT: File has {fileReport.Positives} of max {maxPositives} Positives. File clean! Queued for Signing";
                                 ac.Status = ApiActivity.ApiStatus.QueuedSigning; //send to signing service
                                 _asvc.addUpdateApiActivity(ac);
-                                _l.Debug(ac.Message);
+                                _l.Information(ac.Message);
                             }
                             else
                             {
                                 //file infected
-                                ac.Message = $"file scanned by VT has {fileReport.Positives} of max {maxPositives}. File infected!! Cancel Signing";
+                                ac.Message = $"File scanned by VT: File has {fileReport.Positives} of max {maxPositives} Positives. File infected!! Cancel Signing";
                                 ac.Status = ApiActivity.ApiStatus.Error;
                                 _asvc.addUpdateApiActivity(ac);
-                                _l.Debug(ac.Message);
+                                _l.Warning(ac.Message);
                             }
 
                         }

@@ -95,7 +95,7 @@ $(document).ready(function () {
                 console.log(jsonResult);
                 if (jsonResult.Status === "ready") {
                     // no need to execute further
-                    console.log("updated returned ready");
+                    console.log("API returned ready");
                     $('#statusmessage').addClass("text-success font-weight-bold").removeClass("text-primary text-danger");
                     $('#statusicon').html("<a href='#' class='btn btn-success btn-circle btn-lg'> <i class='fas fa-check-circle'></i></a>");
                     $('#apiresultrow').html(populateResultTableFromJson(jsonResult, ["FileHash", "CertIssuedTo", "CertIssuedBy", "CertHash", "CertExpire", "DownloadUrl"]));
@@ -103,7 +103,7 @@ $(document).ready(function () {
                 }
                 else if (jsonResult.Status === "error") {
                     // stop on error
-                    console.log("updated returned error. Stopp.");
+                    console.log("API returned error. Stop.");
                     $('#statusmessage').addClass("text-danger font-weight-bold").removeClass("text-success text-primary");
                     $('#statusicon').html("<a href='#' class='btn btn-danger btn-circle btn-lg'> <i class='fas fa-exclamation-triangle'></i></a>");
                     callback(true);
@@ -112,7 +112,7 @@ $(document).ready(function () {
                     //still in progress -> update Status
                     $('#statusmessage').addClass("text-primary font-weight-bold").removeClass("text-success text-danger");
                     //$('#statusicon').html("<div class='spinner-grow text-primary'> </div>");
-                    console.log("updated returned not ready yet");
+                    console.log("API returned not ready yet");
                     callback(false);
                 }
                 $('#statusmessage').html(jsonResult.Message);
@@ -151,7 +151,7 @@ $(document).ready(function () {
     }
 
 
-    // submitting files to API for analysing / signing
+    // submitting files to API for adHoc analysing / signing
     $('#adhocsignerform').submit(function myfunction(e) {
         // not submitting form by Browser
         e.preventDefault();
@@ -191,7 +191,7 @@ $(document).ready(function () {
                     $('#statusmessage').html("<div class='text-primary'>In Progres...</div>");
 
                     //Start Api Status Monitor for updating result table until API thread is finished with "ready"
-                    pollFunc(updateResultFromUrl, 40000, 2000, jsonResult.StatusUrl);
+                    pollFunc(updateResultFromUrl, 300000, 2000, jsonResult.StatusUrl);
                 }
                 else {
                     //error while posting
@@ -205,10 +205,65 @@ $(document).ready(function () {
                 alert('Exception:', exception);
             }
         });
-
-
-
     });
+
+
+    // submitting files to API for user authenticated analysing / signing
+    $('#usersignerform').submit(function myfunction(e) {
+        // not submitting form by Browser
+        e.preventDefault();
+
+        //get url for ajax from page
+        var form = $(this);
+        var fdataWithFiles = new FormData(form[0]);
+        var ApiUrl = form.attr('action');
+
+        //only execute api request if minimum inputs are set
+        if (document.querySelector("#officefileselect").files.length == 0) {
+            $('#statusicon').html("<a href='#' class='btn btn-danger btn-circle btn-lg'> <i class='fas fa-exclamation-triangle'></i></a>");
+            $('#statusmessage').addClass("text-danger font-weight-bold").removeClass("text-success");
+            $('#statusmessage').html("You must select a office file!");
+            return;
+        }
+        else {
+            // clear from last run 
+            $('#statusmessage').html("");
+            $('#statusicon').html("");
+        }
+
+
+        $.ajax({
+            type: "POST",
+            url: ApiUrl,
+            contentType: false,
+            processData: false,
+            data: fdataWithFiles,
+            success: function (data) {
+                var jsonResult = $.parseJSON(data);
+                console.log(jsonResult);
+
+                if (jsonResult.Status.startsWith("queued")) {
+                    //start inprogress icon
+                    $('#statusicon').html("<div class='spinner-grow text-primary'> </div>");
+                    $('#statusmessage').html("<div class='text-primary'>In Progres...</div>");
+
+                    //Start Api Status Monitor for updating result table until API thread is finished with "ready"
+                    pollFunc(updateResultFromUrl, 300000, 2000, jsonResult.StatusUrl);
+                }
+                else {
+                    //error while posting
+                    $('#statusicon').html("<a href='#' class='btn btn-danger btn-circle btn-lg'> <i class='fas fa-exclamation-triangle'></i></a>");
+                    $('#statusmessage').addClass("text-danger font-weight-bold").removeClass("text-success");
+                    $('#statusmessage').html(jsonResult.Message);
+                }
+
+            },
+            error: function (jqxhr, status, exception) {
+                alert('Exception:', exception);
+            }
+        });
+    });
+
 
 
     

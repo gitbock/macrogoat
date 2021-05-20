@@ -85,7 +85,7 @@ namespace SignerApi.Services
 
             // prepare run
             ProcessStartInfo psi = new ProcessStartInfo();
-            psi.FileName = Directory.GetCurrentDirectory() + "/lib/signtool.exe";
+            psi.FileName = Directory.GetCurrentDirectory() + @"\lib\signtool.exe";
             psi.RedirectStandardError = true;
             psi.RedirectStandardOutput = true;
             psi.UseShellExecute = false;

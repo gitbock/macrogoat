@@ -81,8 +81,7 @@ namespace MacroGoat.Services
         public static string[] DefaultRoles =
         {
             "SuperAdmin",
-            "Signer",
-            "CertAdmin"
+            "Signer"
         };
 
         /// <summary>
@@ -154,12 +153,10 @@ namespace MacroGoat.Services
         public void writeMgSettings(MgSettings newSettings)
         {
             //Description must not be overwritten. Better way??
-            newSettings.DeleteFilesAfterSign.Description = MgSettings.DeleteFilesAfterSign.Description;
             newSettings.FileSettings.ProfilePicturePath.Description = MgSettings.FileSettings.ProfilePicturePath.Description;
             newSettings.ApiSettings.AdhocSignerURL.Description = MgSettings.ApiSettings.AdhocSignerURL.Description;
             newSettings.ApiSettings.SignerURL.Description = MgSettings.ApiSettings.SignerURL.Description;
             newSettings.ApiSettings.VerifyURL.Description = MgSettings.ApiSettings.VerifyURL.Description;
-            newSettings.ApiSettings.StatusURL.Description = MgSettings.ApiSettings.StatusURL.Description;
 
 
             using (StreamWriter file = File.CreateText(@"mgsettings.json"))

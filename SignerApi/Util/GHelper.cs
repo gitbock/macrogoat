@@ -67,6 +67,7 @@ namespace SignerApi.Util
         {
             var webProfilePicDir = conf.GetSection("FileConfig")["CertFilesPath"];
             string systemFolder = Path.Combine(webHostEnv.ContentRootPath, webProfilePicDir);
+            systemFolder = systemFolder.Replace('/', Path.DirectorySeparatorChar);
             return systemFolder;
         }
 
@@ -80,6 +81,7 @@ namespace SignerApi.Util
         {
             var webProfilePicDir = conf.GetSection("FileConfig")["OfficeFilesPath"];
             string systemFolder = Path.Combine(webHostEnv.ContentRootPath, webProfilePicDir);
+            systemFolder = systemFolder.Replace('/', Path.DirectorySeparatorChar);
             return systemFolder;
         }
 

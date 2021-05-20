@@ -103,7 +103,7 @@ namespace SignerApi.Controllers
 
                 // prepare run
                 ProcessStartInfo psi = new ProcessStartInfo();
-                psi.FileName = _webHostEnv.ContentRootPath + "/lib/signtool.exe";
+                psi.FileName = _webHostEnv.ContentRootPath + @"\lib\signtool.exe";
                 psi.RedirectStandardError = true;
                 psi.RedirectStandardOutput = true;
                 psi.UseShellExecute = false;
@@ -274,6 +274,7 @@ namespace SignerApi.Controllers
                 string uniFilenameCertFile = GHelper.createUniqueFileName(certFile.FileName);
                 string systemFolderCertFile = GHelper.getCertFilesSystemDir(_webHostEnv, _conf);
                 string systemFileNameCertFile = Path.Combine(systemFolderCertFile, uniFilenameCertFile);
+                systemFileNameCertFile = systemFileNameCertFile.Replace('/', Path.DirectorySeparatorChar).Replace('\\', Path.DirectorySeparatorChar);
                 ac.SystemCertFilename = systemFileNameCertFile;
 
                 // create dir if not exist
@@ -434,7 +435,7 @@ namespace SignerApi.Controllers
             string uniFilenameOfficeFile = GHelper.createUniqueFileName(officeFile.FileName);
             string systemFolderOfficeFile = GHelper.getOfficeFilesSystemDir(_webHostEnv, _conf);
             string systemFileNameOfficeFile = Path.Combine(systemFolderOfficeFile, uniFilenameOfficeFile);
-            ac.SystemOfficeFilename = systemFileNameOfficeFile;
+            
 
             // create dir if not exist
             System.IO.Directory.CreateDirectory(systemFolderOfficeFile);
@@ -443,10 +444,11 @@ namespace SignerApi.Controllers
             {
                 officeFile.CopyTo(fileStream);
             }
+            ac.SystemOfficeFilename = systemFileNameOfficeFile;
 
             if (analyse)
             {
-                // Queue foor ANALYSING
+                // Queue for ANALYSING
                 ac.Status = ApiActivity.ApiStatus.QueuedAnalysis;
                 ac.Message = "File queued for analysis";
                 _asvc.addUpdateApiActivity(ac);
@@ -570,7 +572,7 @@ namespace SignerApi.Controllers
             ac.Status = ApiActivity.ApiStatus.Ready;
             ac.Message = $"Status requested for key {key}, unique Key for this status request {ac.UniqueKey}";
             _asvc.addUpdateApiActivity(ac);
-            _l.Information(ac.Message);
+            _l.Debug(ac.Message);
             //check if malicious content, GUID == 36 characters
             if (key.Length != 36)
             {

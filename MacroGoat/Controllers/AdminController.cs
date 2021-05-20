@@ -18,12 +18,7 @@ namespace MacroGoat.Controllers
         {
             _hlp = hlp;
         }
-        
-        [Authorize(Roles = "SuperAdmin,CertAdmin")]
-        public IActionResult CertManager()
-        {
-            return View();
-        }
+       
 
 
         [Authorize(Roles = "SuperAdmin")]

@@ -54,8 +54,13 @@ namespace MacroGoat
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, DataContext db, GHelperService helper, UserManager<GUser> userManager, RoleManager<IdentityRole> roleManager)
         {
+
+            
+
+
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -82,6 +87,8 @@ namespace MacroGoat
                     pattern: "{controller=Home}/{action=Index}/{id?}");
                 endpoints.MapRazorPages();
             });
+
+            
         }
     }
 }
