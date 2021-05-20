@@ -20,23 +20,23 @@ The idea is as follows:
 
 ## Functions
 MacroGoat provides three funtions
-1. Verify Signature
+1. Verify Signature  
 You may upload an office file to check the signature. If it's signed already, informatin about the certificate is shown.
 ![Verify](/img/verify_demo.png)
 
-2. AdHoc Signer
+2. AdHoc Signer  
 AdHoc Signer can be used without any authentication. Using AdHoc Signer you can upload an office file and a cert file containing the private key.
 You can choose to analyse your office file with VirusTotal first. If the file is clean, the office file is signed by the uploaded certificate. 
 ![AdHoc1](/img/adhoc_demo1.png)
 ![AdHoc2](/img/adhoc_demo2.png)
 
-3. Signing using preconfigured certificate
+3. Signing using preconfigured certificate  
 After authentication, a user can upload office file. The office file is analysed and signed with the admin provided certificate. No need to upload a certificate.
 ![Signing1](/img/signing1.png)
 ![Signing2](/img/signing2.png)
 
 
-You can configire the GUI part for the API usage
+You can configire the GUI part for the API usage  
 ![Settings1](/img/settings1.png)
 ![Settings2](/img/settings2.png)
 
@@ -44,13 +44,13 @@ You can configire the GUI part for the API usage
 ## Architecture
 MacroGoat consists of two applications
 
-1. Gui
+1. Gui  
 This is a plain dotnet application which provides a nice GUI for the user to upload his files. The Gui basically provides a websites which makes use of the SignerApi (see 2.). The 
 application provides a login mechanism to make use of the admin-provided profile. Using this profile, the user can upload his office files without the need of a certificate. The
 ceritificate which is needed to sign the office file is provided in a profile the administrator already pre-configured for his users. The Gui part is excahngeable with any other 
 web application. It basically calls the SignerAPI (see 2.)
 
-2. SignerApi
+2. SignerApi  
 This is the core which analyses uploaded office files by VirusTotal and signs office files by a certificate either provided directly (AdHoc Signer) or by admin pre-configured files.
 Instead of VirusTotal you may also think of an analyser service like cuckoo sandbox running in the enterprise's private stack in the futire.
 
