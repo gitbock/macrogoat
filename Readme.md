@@ -37,8 +37,8 @@ After authentication, a user can upload office file. The office file is analysed
 
 
 You can configure the GUI part for the API usage  
-![Settings1](/img/settings1.png)
-![Settings2](/img/settings2.png)
+![Settings1](/img/settings1.png)  
+![Settings2](/img/settings2.png)  
 
 
 ## Architecture
