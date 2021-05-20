@@ -45,7 +45,7 @@ You can configure the GUI part for the API usage
 MacroGoat consists of two applications
 
 1. Gui  
-This is a plain dotnet application which provides a nice GUI for the user to upload his files. The Gui basically provides a websites which makes use of the SignerApi (see 2.). The 
+This is a plain dotnet application which provides a nice GUI for the user to upload his files. The Gui basically provides a website which makes use of the SignerApi (see 2.). The 
 application provides a login mechanism to make use of the admin-provided profile. Using this profile, the user can upload his office files without the need of a certificate. The
 ceritificate which is needed to sign the office file is provided in a profile the administrator already pre-configured for his users. The Gui part is excahngeable with any other 
 web application. It basically calls the SignerAPI (see 2.)
