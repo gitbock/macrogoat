@@ -370,3 +370,5 @@ FodyWeavers.xsd
 /SignerApi/storage/office_files
 /MacroGoat/macrogoat.db
 /SignerApi/secrets.json
+/create_self_signed_cert.ps1
+/deploy_webapp.ps1
