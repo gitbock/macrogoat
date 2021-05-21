@@ -1,7 +1,4 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+name: $(MajorVersion).$(MinorVersion).$(Year:yy)$(Month)$(DayOfMonth).$(Rev:r)
 
 trigger:
 - master
@@ -15,7 +12,7 @@ variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
   #versionstring: $[format('{0:yyyy}-{0:MM}-{0:dd}T{0:HH}:{0:mm}:{0:ss}', pipeline.startTime)]
-  versionstring: $(MajorVersion).$(MinorVersion).$[date:yy]
+  versionstring: $(Build.BuildNumber)
 
 
 
