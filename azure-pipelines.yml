@@ -19,23 +19,23 @@ steps:
 - task: NuGetToolInstaller@1
 
 
+# Update Version Number
+- task: VersionDotNetCoreAssemblies@2
+  inputs:
+    Path: '$(Build.SourcesDirectory)'
+    VersionNumber: '2.0.0.0'
+    Injectversion: false
+    VersionRegex: '\d+\.\d+\.\d+\.\d+'
+    FilenamePattern: '.csproj'
+    AddDefault: true
+    OutputVersion: 'OutputedVersion'
+
 
 # Build GUI Part
 - task: NuGetCommand@2
   inputs:
     restoreSolution: 'Macrogoat/MacroGoat.csproj'
 
-
-# Update Version Number
-- task: VersionDotNetCoreAssemblies@2
-  inputs:
-    Path: '$(Build.SourcesDirectory)'
-    VersionNumber: '$(Build.BuildNumber)'
-    Injectversion: false
-    VersionRegex: '\d+\.\d+\.\d+\.\d+'
-    FilenamePattern: '.csproj'
-    AddDefault: true
-    OutputVersion: 'OutputedVersion'
 
 
 - task: VSBuild@1
