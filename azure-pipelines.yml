@@ -33,6 +33,7 @@ steps:
     VersionNumber: '$(Build.BuildNumber)'
     Injectversion: true
     FilenamePattern: '.csproj'
+    AddDefault: true
     OutputVersion: 'OutputedVersion'
 
 
