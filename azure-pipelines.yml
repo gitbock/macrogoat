@@ -25,15 +25,16 @@ steps:
   inputs:
     restoreSolution: 'Macrogoat/MacroGoat.csproj'
 
+
 # Update Version Number
 - task: VersionDotNetCoreAssemblies@2
   inputs:
     Path: '$(Build.SourcesDirectory)'
     VersionNumber: '$(Build.BuildNumber)'
-    Injectversion: False
-    VersionRegex: '\d+\.\d+\.\d+\.\d+'
+    Injectversion: true
     FilenamePattern: '.csproj'
     OutputVersion: 'OutputedVersion'
+
 
 - task: VSBuild@1
   inputs:
