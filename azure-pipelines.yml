@@ -9,7 +9,6 @@ trigger:
 pool:
   vmImage: 'windows-latest'
   demands: Default
-  name: agent.name -eq iis_2
 
 variables:
   buildPlatform: 'Any CPU'
