@@ -14,19 +14,20 @@ pool:
 variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  versionstring: '$(MajorVersion).$(MinorVersion).$(date:yy)$(DayOfYear)$(rev:.r)'
+  versionstring: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
 
 
 
 steps:
-- task: NuGetToolInstaller@1
-
+# Calculate Version String
 - task: PowerShell@2
   inputs:
     targetType: 'inline'
     script: |
-      Write-Host "VERSION = $(versionstring)"
+      Write-Host "$(versionstring)"
       exit 1
+
+- task: NuGetToolInstaller@1
 
 
 # Update Version Number
