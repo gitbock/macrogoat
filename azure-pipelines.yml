@@ -10,7 +10,6 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: 'Macrogoat/MacroGoat.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
@@ -21,11 +20,19 @@ steps:
   inputs:
     restoreSolution: '$(solution)'
 
+
+# Build GUI Part
 - task: VSBuild@1
   inputs:
-    solution: '$(solution)'
+    solution: 'Macrogoat/MacroGoat.csproj'
     msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\macrogoat-gui.zip" /p:DeployIisAppPath="macrogoat-gui"'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
-
+# Build API Part
+- task: VSBuild@1
+  inputs:
+    solution: 'SignerApi/SignerApi.csproj'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\macrogoat-api.zip" /p:DeployIisAppPath="macrogoat-api"'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
