@@ -18,16 +18,30 @@ variables:
 steps:
 - task: NuGetToolInstaller@1
 
+
+
+# Build GUI Part
 - task: NuGetCommand@2
   inputs:
-    restoreSolution: '$(solution)'
-
+    restoreSolution: 'Macrogoat/MacroGoat.csproj'
 
 
 - task: VSBuild@1
   inputs:
-    solution: 'MacroGoat.sln'
+    solution: 'Macrogoat/MacroGoat.csproj'
     msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\macrogoat-gui.zip" /p:DeployIisAppPath="macrogoat-gui"'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+# Build API Part
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: 'SignerApi/SignerApi.csproj'
+
+- task: VSBuild@1
+  inputs:
+    solution: 'SignerApi/SignerApi.csproj'
+    msbuildArgs: '/p:DeployOnBuild=true /p:WebPublishMethod=Package /p:PackageAsSingleFile=true /p:SkipInvalidConfigurations=true /p:DesktopBuildPackageLocation="$(build.artifactStagingDirectory)\macrogoat-api.zip" /p:DeployIisAppPath="macrogoat-api"'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
