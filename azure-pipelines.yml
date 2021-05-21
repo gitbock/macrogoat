@@ -23,7 +23,7 @@ steps:
 - task: VersionDotNetCoreAssemblies@2
   inputs:
     Path: '$(Build.SourcesDirectory)'
-    VersionNumber: '$(Build.BuildNumber)'
+    VersionNumber: '$(MajorVersion).$(MinorVersion).$(date:yy)$(DayOfYear)$(rev:.r)'
     Injectversion: true
     FilenamePattern: '.csproj'
     AddDefault: true
