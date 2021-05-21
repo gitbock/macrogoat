@@ -14,7 +14,7 @@ pool:
 variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  versionstring: '$(Year:yyyy)'
+  versionstring: '$[format('{0:yyyy}-{0:MM}-{0:dd}T{0:HH}:{0:mm}:{0:ss}', pipeline.startTime)]'
 
 
 
