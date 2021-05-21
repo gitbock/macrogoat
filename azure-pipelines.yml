@@ -1,3 +1,5 @@
+# Set a custom Build Number to be replaced in Assembly Files later
+# Format 1.1.1.1 -> .net std
 name: $(MajorVersion).$(MinorVersion).$(Year:yy)$(Month)$(DayOfMonth).$(Rev:r)
 
 trigger:
@@ -11,19 +13,10 @@ pool:
 variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  #versionstring: $[format('{0:yyyy}-{0:MM}-{0:dd}T{0:HH}:{0:mm}:{0:ss}', pipeline.startTime)]
-  versionstring: $(Build.BuildNumber)
-
+  
 
 
 steps:
-# Calculate Version String
-- task: PowerShell@2
-  inputs:
-    targetType: 'inline'
-    script: |
-      Write-Host "$(versionstring)"
-      exit 1
 
 - task: NuGetToolInstaller@1
 
@@ -32,7 +25,7 @@ steps:
 - task: VersionDotNetCoreAssemblies@2
   inputs:
     Path: '$(Build.SourcesDirectory)'
-    VersionNumber: '2.0.$(Build.BuildNumber)'
+    VersionNumber: '$(Build.BuildNumber)'
     Injectversion: true
     FilenamePattern: '.csproj'
     AddDefault: true
