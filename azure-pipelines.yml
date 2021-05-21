@@ -14,7 +14,7 @@ pool:
 variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
-  versionstring: $(Year:yyyy).$(Month).$(DayOfMonth)$(Rev:.r)
+  versionstring: '$(Year:yyyy)'
 
 
 
