@@ -1,7 +1,6 @@
-# ASP.NET Core (.NET Framework)
-# Build and test ASP.NET Core projects targeting the full .NET Framework.
-# Add steps that publish symbols, save build artifacts, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/dotnet-core
+# Set a custom Build Number to be replaced in Assembly Files later
+# Format 1.1.1.1 -> .net std
+name: $(MajorVersion).$(MinorVersion).$(Year:yy)$(Month)$(DayOfMonth).$(Rev:r)
 
 trigger:
 - master
@@ -14,16 +13,12 @@ pool:
 variables:
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
+  
+
 
 steps:
+
 - task: NuGetToolInstaller@1
-
-
-
-# Build GUI Part
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: 'Macrogoat/MacroGoat.csproj'
 
 
 # Update Version Number
@@ -35,6 +30,13 @@ steps:
     FilenamePattern: '.csproj'
     AddDefault: true
     OutputVersion: 'OutputedVersion'
+
+
+# Build GUI Part
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: 'Macrogoat/MacroGoat.csproj'
+
 
 
 - task: VSBuild@1
