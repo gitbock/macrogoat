@@ -106,11 +106,11 @@ namespace SignerApi
             // Register own Database Service
             services.AddTransient<IApiActivityService, ApiActivityService>();
 
-            //Register Analyser Background Service
-            services.AddSingleton<IHostedService, AnalyseService>();
-
             //Register Signing Background Service
             services.AddSingleton<IHostedService, SignService>();
+
+            //Register Analyser Background Service
+            services.AddSingleton<IHostedService, AnalyseService>();
 
             // for accessing http context in custom components
             services.AddHttpContextAccessor();
