@@ -35,7 +35,8 @@ namespace SignerApi.Services
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             //Read configs
-            int checkInterval = Int32.Parse(_conf.GetSection("AnalyseService")["checkIntervalSeconds"]);
+            var strCheckInterval = _conf.GetValue<string>("AnalyseService:checkIntervalSeconds");
+            int checkInterval = Int32.Parse(strCheckInterval);
 
             // Read secrets
             JObject secretsConfig = JObject.Parse(File.ReadAllText(@"secrets.json")); //secrets.json file not checked in. .gitignore
