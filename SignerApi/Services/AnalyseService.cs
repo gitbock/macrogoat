@@ -35,7 +35,8 @@ namespace SignerApi.Services
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             //Read configs
-            var strCheckInterval = _conf.GetValue<string>("AnalyseService:checkIntervalSeconds");
+            var strCheckInterval = _conf.GetValue<string>("AnalyseService:CheckIntervalSeconds");
+            _l.Information($"chekinterval {strCheckInterval}");
             int checkInterval = Int32.Parse(strCheckInterval);
 
             // Read secrets

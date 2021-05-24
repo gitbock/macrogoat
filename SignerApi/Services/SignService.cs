@@ -40,7 +40,7 @@ namespace SignerApi.Services
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
             //Read configs
-            int checkInterval = Int32.Parse(_conf.GetSection("SignService")["checkIntervalSeconds"]);
+            int checkInterval = Int32.Parse(_conf.GetSection("SignService")["CheckIntervalSeconds"]);
 
             _l.Debug($"Signing Service started; will check for new entries each {checkInterval} seconds.");
 
