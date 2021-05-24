@@ -37,7 +37,16 @@ namespace SignerApi.Services
             //Read configs
             var strCheckInterval = _conf.GetValue<string>("AnalyseService:CheckIntervalSeconds");
             _l.Information($"chekinterval {strCheckInterval}");
-            int checkInterval = Int32.Parse(strCheckInterval);
+            int checkInterval = 15;
+            try
+            {
+                checkInterval = System.Int32.Parse(strCheckInterval);
+            }
+            catch (Exception e)
+            {
+
+                _l.Error(e.Message);
+            }
 
             // Read secrets
             JObject secretsConfig = JObject.Parse(File.ReadAllText(@"secrets.json")); //secrets.json file not checked in. .gitignore
